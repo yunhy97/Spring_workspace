@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+   
+   <bean id="SmsMessageSender" class="kr.co.jhta.di.service.SmsMessageSender">
+      <property name="company" value="회사"></property>
+   </bean>
+   
+   <bean id="UserServiceImpl" class="kr.co.jhta.di.service.step7.UserServiceImpl">
+   
+   </bean>
+   <bean id="eventNotificationServiceImpl" class="kr.co.jhta.di.service.step7.EventNotificationServiceImpl">
+      <property name="messageSender" ref="SmsMessageSender"></property>
+      <property name="userService" ref="UserServiceImpl"></property>
+   </bean>
+
+</beans>
