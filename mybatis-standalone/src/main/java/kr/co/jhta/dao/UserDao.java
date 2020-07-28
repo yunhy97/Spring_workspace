@@ -66,7 +66,13 @@ public class UserDao {
 	
 	//select: N행 N열, parameter:String, result:User, 최종값:List<User> 
 	public List<User> getUsersByName(String userName) {
-		return null;
+		SqlSession session = MybatisUtil.getSqlSession();
+		try {
+			List<User> users = session.selectList("getUsersByName",userName);
+			return users;
+		} finally {
+			session.close();
+		}
 	}
 	
 	//select: 1행 N열, parameter:String, result:User 최종값:User객체

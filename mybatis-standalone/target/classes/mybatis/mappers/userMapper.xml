@@ -32,6 +32,15 @@
 		order by user_id asc
 				
 	</select>
+	<select id="getUsersByName" parameterType="stirng" resultType="kr.co.jhta.vo.User">
+		select user_id as id, 
+				user_name as name,
+				user_password as password, 
+				user_email as email, 
+				user_created_date as createdDate
+		from spring_users
+		where user_name like '%' || #{value} || '%'
+	</select>
 	
 	<!-- 
 		parameterType이 int, long, double, boolean, string인 경우는
@@ -56,22 +65,24 @@
 		from spring_users
 	</select>
 	
-	<select id="deleteAllUsers">
+	<delete id="deleteAllUsers">
 		delete from spring_users
-	</select>
+	</delete>
 	
-	<select id="deleteUserById" parameterType="string">
+	<delete id="deleteUserById" parameterType="string">
 		delete from spring_users
 		where user_id = #{value}
-	</select>
+	</delete>
 	
-	<select id="updateUser" parameterType="kr.co.jhta.vo.User">
+	<update id="updateUser" parameterType="kr.co.jhta.vo.User">
 		update spring_users
 		set
 			user_name = #{name},
 			user_password = #{password},
 			user_email = #{email}
 		where user_id = #{id}
-	</select>
+	</update>
+	
+	
 </mapper>
 

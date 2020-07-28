@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="comment">
+	<insert id="insertComment" parameterType="kr.co.jhta.vo.Comment">
+		insert into spring_blog_comments
+		(comment_no, comment_writer, comment_content, blog_no)
+		values
+		(spring_comment_seq.nextval, #{writer}, #{content}, #{blogNo})
+	</insert>
+	
+	<select id="getCommentsByBlogNo" parameterType="int" resultType="kr.co.jhta.vo.Comment">
+		<!-- 조인하기 다시-->
+		select comment_no, comment_writer, comment_content, blog_no, comment_create_date
+		from spring_blog_comments a, spring_users b
+		where blog_no = #{value}
+        and a.comment_writer = b.user_id
+		
+	</select>
+</mapper>
