@@ -1,11 +1,18 @@
 package kr.co.jhta.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import kr.co.jhta.dao.BlogCommentDao;
+import kr.co.jhta.dao.BlogDao;
 import kr.co.jhta.dao.UserDao;
 import kr.co.jhta.exception.DuplicatedUserException;
 import kr.co.jhta.exception.UnauthenticatedUserException;
+import kr.co.jhta.vo.Blog;
+import kr.co.jhta.vo.Comment;
 import kr.co.jhta.vo.User;
 
 /**
@@ -13,10 +20,18 @@ import kr.co.jhta.vo.User;
  * @author JHTA
  *
  */
+
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired
+	private BlogDao blogDao;
+	
+	@Autowired
+	private BlogCommentDao blogCommentDao;
 	
 	@Override
 	public void addNewUser(User user) {
@@ -27,7 +42,9 @@ public class UserServiceImpl implements UserService {
 		
 		userDao.insertUser(user);
 		
-	}@Override
+	}
+	
+	@Override
 	public User login(String id, String password) {
 		User user = userDao.getUserById(id);
 		if(user == null) {
@@ -37,5 +54,41 @@ public class UserServiceImpl implements UserService {
 			throw new UnauthenticatedUserException("아이디 혹은 비밀번호가 올바르지 않습니다.");
 		}
 		return user;
+	}
+	
+	@Override
+	public List<Blog> getMyBlogs(String userId) {
+		return blogDao.getBlogsByWriter(userId);
+		
+	}
+	
+	@Override
+	public List<Comment> getMyComments(String userId) {
+		return blogCommentDao.getCommentsByWriter(userId);
+	}
+	
+	@Override
+	public void updateUserInfo(User user) {
+		userDao.updateUser(user);
+	}
+	
+	@Override
+	public void deleteMyAccount(String userId) {
+		//내가 작성한 모든 댓글 삭제
+		blogCommentDao.deleteCommentsByWriter(userId);
+		
+		//내가 작성한 모든 게시글 조회
+		List<Blog> myBlogs = blogDao.getBlogsByWriter(userId);
+		
+		for(Blog blog : myBlogs) {
+			//각각의 게시글에 달린 모든 댓글을 삭제
+			blogCommentDao.deleteCommentsByBlogNo(blog.getNo());
+		}
+		//내가 작성한 모든 게시글 삭제
+		blogDao.deleteBlogsByWriter(userId);
+		
+		//사용자 정보 삭제
+		userDao.deleteUser(userId);
+		
 	}
 }

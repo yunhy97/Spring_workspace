@@ -39,9 +39,7 @@
 	  }
  -->
 <mapper namespace="kr.co.jhta.dao.UserDao">
-	<!-- 
-		UserDao 인터페이스의 User getUserById(String userId)에 대응되는 SQL 구문
-	 -->
+	
 	<select id="getUserById" parameterType="string" resultType="User">
 		select 
 			user_id as id,
@@ -53,13 +51,36 @@
 		where user_id = #{value}
 	</select>
 	
-	<!-- 
-		UserDao인터페이스의 void insertUser(User user)에 대응되는 SQL 구문
-	 -->
+	
 	 <insert id="insertUser" parameterType="User">
 	 	insert into spring_users
 	 	(user_id, user_name, user_password, user_email)
 	 	values
 	 	(#{id}, #{name}, #{password}, #{email})
 	 </insert>
+	 
+	 <update id="updateUser" parameterType="User">
+	 	update spring_users
+	 		set
+	 			user_password = #{password},
+	 			user_email = #{email}
+	 		where user_id = #{id}
+	 </update>
+	 
+	 <delete id="deleteUser" parameterType="string">
+	 	delete from spring_users
+	 			where user_id = #{value}
+	 </delete>
+	 
+	 <select id="getUsersByName" parameterType="string" resultType="User">
+		select 
+			user_id as id,
+			user_name as name,
+			user_password as password,
+			user_email as email,
+			user_created_date as createdDate
+		from spring_users
+		where user_name = #{value}
+		order by user_name asc
+	</select>
 </mapper>
