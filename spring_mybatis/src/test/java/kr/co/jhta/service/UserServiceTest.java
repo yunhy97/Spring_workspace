@@ -12,6 +12,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import kr.co.jhta.dao.UserDao;
+import kr.co.jhta.exception.DuplicatedUserException;
+import kr.co.jhta.exception.UnauthenticatedUserException;
 import kr.co.jhta.vo.User;
 
 /*
@@ -56,5 +58,24 @@ public class UserServiceTest {
 		User savedUser = userDao.getUserById(user.getId());
 		assertNotNull(savedUser);
 		assertEquals("류관순", savedUser.getName());
+	}
+	
+	@Test(expected=DuplicatedUserException.class)
+	public void testDuplicatedAddUser() {
+		User user = new User("ryu11","류관순","zxcv1234","ryu11@naver.com");
+		userService.addNewUser(user);
+		userService.addNewUser(user);
+	}
+	
+	@Test
+	public void testLogin() {
+		User user = userService.login("kim", "zxcv1234");
+		assertNotNull(user);
+	}
+	
+	@Test(expected=UnauthenticatedUserException.class)
+	public void testLoginFail() {
+		userService.login("kim", "1234");
+	
 	}
 }
