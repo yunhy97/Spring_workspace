@@ -21,6 +21,7 @@
 		<mapper resource="META-INF/mybatis/mappers/freeboards.xml" />
 		<mapper resource="META-INF/mybatis/mappers/orders.xml" />
 		<mapper resource="META-INF/mybatis/mappers/products.xml" />
+		<mapper resource="META-INF/mybatis/mappers/roles.xml" />
 		<mapper resource="META-INF/mybatis/mappers/users.xml" />
 	</mappers>
 </configuration>
