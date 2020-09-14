@@ -1,0 +1,124 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    <style type="text/css">
+    	.sample {
+    		padding-top:7px;
+			padding-left:3px;
+			padding-right:0px
+    	}
+    </style>
+
+<div style="height: 800px;">
+	<div class="text-center mt-5 mb-5">
+		<img src="../../resources/img/comp_default_logo_1.png" width="250px;" />
+	</div>
+	
+			<div class="row" style="font-size:14px; padding:0px; margin:0px;">
+				<form id="info-submit" method="POST" action="/board/companyinfoupdate.do" >
+				
+					<div class="row border-bottom">
+						<!-- 로고, 첨부파일 자리 -->
+						<div class="col-3 pl-2 sample">
+							&emsp;기업명
+						</div>
+						<div class="col-9 pl-2 mb-2">
+							<input type="hidden" class="form-control form-control-sm company-info text-center" value="${LOGIN_USERS.logo }" name="logo" id="company-logo" disabled />
+							<input type="text" class="form-control form-control-sm company-info text-center" value="${LOGIN_USERS.name }" name="name" id="company-name" disabled />
+						</div>
+						
+						<div class="col-3 pl-2 sample">
+							&emsp;소개
+						</div>
+						<div class="col-9 pl-2 mb-2">
+							<textarea rows="3" class="form-control form-control-sm company-info" name="content" id="company-content" disabled>${LOGIN_USERS.content }</textarea>
+						</div>
+						
+						<div class="col-3 sample ">
+							&emsp;홈페이지
+						</div>
+						<div class="col-9 mb-2" >
+							<input type="text" class="form-control form-control-sm company-info text-center" value="${LOGIN_USERS.url }" name="url" id="company-url" disabled />
+						</div>
+						
+						<div class="col-3 sample" style="padding-top:9px;">
+							&emsp;기업규모
+						</div>
+						<div class="col-9 mb-2">
+							<select class="custom-select " id="company-size" name="size">
+								<option selected disabled >						-- 규모를 선택하세요 -- </option>
+								<option id="company-size-big" value="대기업">		&emsp;&emsp;&emsp;&emsp;대기업</option>
+								<option id="company-size-mid" value="중견기업">	&emsp;&emsp;&emsp;&emsp;중견기업</option>
+								<option id="company-size-ms" value="중소기업">		&emsp;&emsp;&emsp;&emsp;중소기업</option>
+								<option id="company-size-start" value="스타트업">	&emsp;&emsp;&emsp;&emsp;스타트업</option>
+							</select>
+						</div>
+		
+						<div class="col-3 pl-2 sample ">
+							&emsp;주소
+						</div>
+						<div class="col-9 mb-2">
+							<input type="text" class="form-control form-control-sm company-info text-center" value="${LOGIN_USERS.address }" name="address" id="company-address" disabled />
+						</div>
+
+						<div class="col-3 pl-2 sample ">
+							&emsp;매출액
+						</div>
+						<div class="col-9 mb-2">
+							<input type="text" class="form-control form-control-sm company-info text-center" value="${LOGIN_USERS.income }" name="income" id="company-income" disabled />
+						</div>
+						
+						<div class="col-12 mb-5 text-right" >
+							<c:if test="${pageContext.request.requestURI ne '/WEB-INF/views/board/userBoardWrite.jsp'}">
+									<a class="btn btn-success btn-sm " id="modify-company-btn">수정</a>	
+									<button type="reset" class="btn btn-danger btn-sm " id="cancel-company-btn">리셋</button>	
+									<button type="submit" class="btn btn-primary btn-sm " id="confirm-company-btn" >확인</button>	
+							</c:if>
+						</div>
+						
+					</div>
+					<div class="mb-5"></div>				
+				</form>
+				
+				
+			</div>
+
+			<div class="text-center mb-5">
+					<a class="btn btn-lg btn-warning" id="company-delete" href="/company/companyDelete.do?companyNo=${LOGIN_USERS.no }">회원 탈퇴</a><!-- redirect:https://nid.naver.com/user2/help/externalAuth.nhn?lang=ko_KR -->
+			</div>
+
+
+</div>
+
+<script type="text/javascript">
+
+ $(function() {
+	 $("#company-delete").click(function(){
+		 alert("기업 탈퇴는 관리자에게 문의 바랍니다");
+	 })
+	 
+	 $('#confirm-company-btn').hide();
+	 $('#cancel-company-btn').hide();
+	
+	 
+	 
+	 $('#modify-company-btn').click(function() {
+		 event.preventDefault();
+		 // 바로 전송을 막기 위한 이벤트 정지?
+		 
+		 $('.company-info').attr('disabled', false);
+		 $('#modify-company-btn').hide();
+		 $('#confirm-company-btn').show();
+		 $('#cancel-company-btn').show();
+	 })
+	 
+	 
+	 
+	 $('#confirm-company-btn').click(function() {
+		$('#info-submit').submit();
+	 })
+	 
+	 
+	 
+
+ })
+</script>

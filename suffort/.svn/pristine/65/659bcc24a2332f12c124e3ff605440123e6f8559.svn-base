@@ -1,0 +1,30 @@
+package com.sample.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import com.sample.web.dto.CompBoardDto;
+import com.sample.web.dto.TagDto;
+import com.sample.web.dto.UserBoardDto;
+import com.sample.web.vo.Categories;
+import com.sample.web.vo.CompBoard;
+
+public interface CompBoardDao {
+	void insertCompBoard(CompBoard compBoard);
+	List<CompBoardDto> getAllCompBoards(Map<String, Object> paramMap);
+	int getAllCompBoardsCount(Map<String, Object> paramMap);
+	
+	// 메인에서 검색시
+	List<CompBoardDto> getAllCompBoardsByKeyword(String keyword);
+	List<TagDto> getTagsByBoardNo(long boardNo);
+	List<TagDto> getTagsByCategoriesNo(long categoryNo);
+	List<CompBoardDto> getCompBoardsByNo(long companyNo); // 기업마이페이지 리스트
+	CompBoardDto getCompBoardDetail(long compBoardNo);
+	void updateCopBoard(CompBoard compBoard);
+	List<Categories> getAllCategories();
+	void insertCompBoardTags(TagDto tagDto);
+	List<CompBoardDto> getCompBoardsByTag(long tagNo);
+	
+	void increaseCompUserLikes(long boardNo);
+	void decreaseCompUserLikes(long boardNo);
+}

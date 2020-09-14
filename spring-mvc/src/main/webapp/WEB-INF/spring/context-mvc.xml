@@ -42,13 +42,19 @@
       <mvc:jsp prefix="/WEB-INF/views/" suffix=".jsp"/>
    </mvc:view-resolvers>
    
-   <!-- 
-   		<mvc:resources /> 태그는 정적리소스(그림, 동영상, css, js)에
-   		대한 요청이 접수되면 DispatcherServlet 대신 스프링의 정적리소스를 서비스하는
-   		서블릿이 요청을 해결한다.
+   <!-- //
+      * : 리소스의 내용
+      * : 리소스의 모든 하위 디렉토리
     -->
-   <mvc:resources mapping="/resources/**" location="/resources/"></mvc:resources>
-   
+    
+   <!-- 
+      <mvc:resources /> 태그는 정적 리소스 (그림, 동영상, css, js)에 대한 요청이 접수되면
+      DispatcherServlet 대신 스프링의 정적리소스를 서비스하는 서블릿이 요청을 해결한다
+      * 요청 URL이 /resources/로 시작되는 요청은 /resources/폴더에서 찾아서 제공한다
+      * 요청 URL이 *.html인 요청은 webapp 폴더 바로 밑에서 찾아서 제공한다
+    -->
+   <mvc:resources mapping="/resources/**" location="/resources/" />
+   <mvc:resources mapping="/*.html" location="/" />
    <!-- 
    		인터셈터를 스프링의 빈으로 등록하기
     -->

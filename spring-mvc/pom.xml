@@ -147,6 +147,17 @@
           <artifactId>commons-fileupload</artifactId>
           <version>1.4</version>
       </dependency>
+      <dependency>
+	    <groupId>commons-io</groupId>
+	    <artifactId>commons-io</artifactId>
+	    <version>2.4</version>
+	</dependency>
+    <dependency> 
+	    <groupId>com.ckeditor</groupId> 
+	    <artifactId>ckeditor-java-core</artifactId> 
+	    <version>3.5.3</version> 
+    </dependency>
+
       
       <!-- 폼 입력값 유효성 검증을 지원하는 라이브러리 -->
 	  <dependency>

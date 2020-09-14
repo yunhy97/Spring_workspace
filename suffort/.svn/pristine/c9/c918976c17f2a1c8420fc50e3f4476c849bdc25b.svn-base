@@ -1,0 +1,134 @@
+package com.sample.web.controller;
+
+import java.util.List;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import com.sample.service.CareerService;
+import com.sample.service.LicenseService;
+import com.sample.service.UserService;
+import com.sample.web.form.CareerForm;
+import com.sample.web.form.LicenseForm;
+import com.sample.web.form.UsersUpdateForm;
+import com.sample.web.vo.Careers;
+import com.sample.web.vo.Licenses;
+import com.sample.web.vo.Users;
+/**
+* Handles requests for the application home page.
+*/
+@Controller
+@SessionAttributes({"TEMP_USER", "LOGIN_USERS", "LOGIN_TYPE"})
+public class UserInfoController {
+
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private CareerService careerService;
+	
+	@Autowired
+	private LicenseService licenseService;
+
+	
+	// 사용자 정보 업데이트
+	@RequestMapping(value = "/board/userinfoupdate.do", method = RequestMethod.POST )
+	public String userInfoUpdate(Users users, UsersUpdateForm userUpdateForm) {
+		
+//		System.out.println(userUpdateForm);
+//		System.out.println(users.getNo());
+		
+		users.setEmail(userUpdateForm.getEmail());
+		users.setName(userUpdateForm.getName());
+		users.setGender(userUpdateForm.getGender());
+		users.setGitAddr(userUpdateForm.getGitAddr());
+		users.setBirth(userUpdateForm.getBirth());
+		
+		System.out.println(users.getBirth());
+		userService.modifyUserDetail(users);
+		
+		return "redirect:/board/userMyPage.do";
+	}
+	
+	// 필요함
+	@GetMapping("/common/career.do")
+	public String careers() {
+		//(Users users, Model model) 뺌
+		return "/common/career";
+	}
+	
+	// ajax 데이터
+	@GetMapping("/common/careerajax.do")
+	@ResponseBody
+	public List<Careers> career(Users users) {
+		//(, Model model) 뺌
+		List<Careers> careerList = careerService.getCareerByUserNo(users.getNo());
+		
+		return careerList;
+	}
+	
+	//0 ajax 안쓴거?? 데이터 추가?
+	@RequestMapping(value = "/common/usercareerupdate.do", method = RequestMethod.POST )
+	public String careerInfoUpdate(CareerForm careerForm, Users users) {
+		Careers careers = new Careers();
+		BeanUtils.copyProperties(careerForm, careers);
+		careers.setUserNo(users.getNo());
+		
+		careerService.addNewCareer(careers);
+		System.out.println(careerForm.getNo() + "번 경력 추가 완료");
+		
+		return "redirect:/common/career.do";
+	}
+	
+	///
+	@RequestMapping(value = "/common/careerajaxdel.do", method = RequestMethod.POST)
+	public void careerInfoDelete(Careers careers) {
+		
+	}
+	
+	
+	
+	
+	
+	@GetMapping("/common/license.do")
+	public String license() {
+		
+		return"/common/license";
+	}
+	
+	// ajax 데이터
+	@GetMapping("/common/licenseajax.do")
+	@ResponseBody
+	public List<Licenses> license(Users users) {
+		List<Licenses> licenseList = licenseService.getLicenseByUserNo(users.getNo());
+		
+		return licenseList;
+	}
+	
+	//0 ajax 안쓴거?? 데이터 추가?
+	@RequestMapping(value = "/common/userlicenseupdate.do", method = RequestMethod.POST )
+	public String licenseInfoUpdate(LicenseForm licenseForm, Users users) {
+		Licenses licenses = new Licenses();
+		BeanUtils.copyProperties(licenseForm, licenses);
+		licenses.setUserNo(users.getNo());
+		
+		licenseService.addNewLicense(licenses);
+		System.out.println(licenseForm.getNo() + "번 경력 추가 완료");
+		
+		return "redirect:/common/license.do";
+	}
+	
+	
+	
+	
+	
+	
+	
+}

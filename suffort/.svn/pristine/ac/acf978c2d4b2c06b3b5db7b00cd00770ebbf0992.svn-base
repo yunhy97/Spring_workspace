@@ -1,0 +1,23 @@
+package com.sample.service;
+
+import java.util.List;
+import java.util.Map;
+
+import com.sample.web.dto.CompBoardDto;
+import com.sample.web.vo.CompBoard;
+import com.sample.web.vo.CompanyUserLikes;
+import com.sample.web.vo.UserCompLikes;
+
+public interface CompBoardService {
+	void addNewCompBoard(CompBoard compBoard, List<Long> tags);
+	Map<String, Object> getAllCompBoard(Map<String, Object> paramMap);
+	// 메인에서 검색시
+	List<CompBoardDto> getAllCompBoardByKeword(String keyword);
+	List<CompBoardDto> getCompBoardsByNo(long companyNo);
+	CompBoardDto getCompBoardDetail(long boardNo);
+	void modifyCompBoardDetail(CompBoard compBoard);
+	List<CompBoardDto> getCompBoardsByTag(long tagNo);
+	
+	void addCompLikes(CompanyUserLikes likes);
+	void deleteCompLikes(CompanyUserLikes likes);
+}

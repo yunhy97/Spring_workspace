@@ -1,0 +1,585 @@
+package com.sample.web.Handler;
+
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.socket.BinaryMessage;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
+
+import com.google.gson.Gson;
+import com.sample.service.CommunityService;
+import com.sample.web.dto.CommunityContentDetail;
+import com.sample.web.dto.CommunityGuestDetail;
+import com.sample.web.vo.Communities;
+import com.sample.web.vo.CommunityContents;
+import com.sample.web.vo.CommunityGuests;
+
+
+@Component
+public class SocketHandler extends TextWebSocketHandler{
+	// 실시간 활성화된 방의 정보를 저장해두는 Map
+	// 구조 => communitiesNo < userNo , session >
+	HashMap<Long, HashMap<Long, WebSocketSession>> activedCommunities = new HashMap<>();
+	
+	@Autowired
+	CommunityService communityService;
+	
+	Gson gson = new Gson();
+	
+	// 파일 업로드용
+	private static final String FILE_UPLOAD_PATH = "C:/APP/";
+	static int fileUploadIdx = 0;
+	static String fileUploadSession = "";
+	
+	/*
+	 * 소켓과 연결과 동시에 실행되는 메소드
+	 * @see org.springframework.web.socket.handler.AbstractWebSocketHandler#afterConnectionEstablished(org.springframework.web.socket.WebSocketSession)
+	 */
+	@SuppressWarnings({"unchecked"})
+	@Override
+	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+		System.out.println("----- afterConnectionEstablished() 실행 -----");		
+		// 커뮤니티 번호, 유저번호, 세션번호 획득
+		String getQueryString = session.getUri().toString().split("/inside/")[1];
+		long communityNo = Long.parseLong(getQueryString.split("&")[0]);
+		long userNo = Long.parseLong(getQueryString.split("&")[1]);		
+		//String sessionId = session.getId();
+		
+		System.out.println("getQueryString : " + getQueryString);
+		System.out.println("communityNo : " + communityNo);
+		System.out.println("userNo : " + userNo);
+		System.out.println("session : " + session);
+		
+		
+		// @@해결하기@@
+		// url조작을 통해서 방에 접속하는것을 방지하기 위해 해당 inside접근시 브라우저의 session과 url의 userNo를 반드시 대조할것(요건 공동 해결)
+		// url조작을 통해서 암호화된 방 접속을 방지하기 위해 inside페이지 랜딩시 검증방법을 강구할 것!!(이건 내가 해결)
+		
+		// 방의 존재여부 검증 및 해당 방의 참여자 정보 등록, 조회, 반환
+		Communities communities = communityService.getCommunityByNo(communityNo);
+		System.out.println("방 존재 여부 검증 커뮤니티 가져오기 communities : " + communities );
+		if(communities == null) {
+			// 방지 존재하지 않음 => 에러메시지 브라우저에 전송 (type : err) // 잘못된 경로로 접근(url직접입력과 같은..)
+			// JSON객체에 err메세지 담아서 보내주기???
+			JSONObject obj = new JSONObject();		
+			obj.put("type", "close");
+			session.sendMessage(new TextMessage(gson.toJson(obj)));
+			return;
+		}
+		
+		// 테이블에 커뮤니티 접속정보 검사
+		// @@ guest에 유저상세정보를 함께 내려주기
+		List<CommunityGuestDetail> guests = communityService.getComGuestByNo(communityNo);
+		System.out.println("커뮤니티 접속정보 가져오기 guests : " + guests);
+		
+		// 커뮤니티 입장시 comguest actived_date 날짜 현재시간으로 업데이트
+		CommunityGuests communityGuests = communityService.getCommunityGuestsByNo(communityNo, userNo);
+		communityService.updateComGuestActivedDate(communityGuests);
+		
+		// activedRoom에 방번호(키)로 유저번호,웹소켓세션(벨류) 저장
+		System.out.println("activedCommunities.containsKey(communityNo) : " + activedCommunities.containsKey(communityNo));
+		
+		if(activedCommunities.containsKey(communityNo)) { 
+			// 활성화된방
+			HashMap<Long, WebSocketSession> activedCommunityByNo = activedCommunities.get(communityNo);
+			// 이미 접속한 유저가 같은방에 중복으로 접속을 시도할 경우
+			if(activedCommunityByNo.containsKey(userNo)) {
+				System.out.println("@@@@@@@@@ 이미 접속한 유저가 중복으로 접속 시도 @@@@@@@@");
+				JSONObject obj = new JSONObject();		
+				obj.put("type", "close");
+				session.sendMessage(new TextMessage(gson.toJson(obj)));
+				return;
+			}
+			activedCommunityByNo.put(userNo, session);
+		} else {
+			// 비활성화된방
+			HashMap<Long, WebSocketSession> userInfo = new HashMap<>();
+			userInfo.put(userNo, session);
+			activedCommunities.put(communityNo, userInfo);
+		}
+		System.out.println("activedCommunities에 등록한 session id : " +  session.getId());
+		// 브라우저로 값 내려주기
+		// 해당 방정보(명단, 타이틀 등), 웹소켓아이디, 기존컨텐츠
+		List<CommunityContentDetail> contents = communityService.getComContentDetailByNo(communityNo);
+			
+		// 소켓 추가한 후 해당 세션이 소속된 방의 정보를 브라우저로 전송한다. 
+		// @@@@@@ 수정해야함 => 소속된 모든 세션에게 전달할것 @@@@@@
+		
+		
+		JSONObject obj = new JSONObject();		
+		obj.put("type", "connect");
+		obj.put("community", communities);
+		obj.put("sessionId", session.getId());
+		obj.put("communityGuests", guests);
+		obj.put("contents", contents);	
+		
+		// @@@@@@@@@@@@@@@ 유저가 참여중인 모든 커뮤니티 리스트 조회 및 반환
+		// DTO생성해야함 => 방번호, 유저번호, 권한, 방참여날짜 // 방타이틀, 방사진, 방 등록날짜, 방range, 방intro  
+		
+	
+		// 활성화된 방에서 해당방의 모든  유저 조회
+		HashMap<Long, WebSocketSession> usersInCom = activedCommunities.get(communityNo);
+		
+		// 출력을 위한 키셋 획득
+		Set<Long> keySet = usersInCom.keySet();
+		
+		// 방에 접속한 모든 유저 정보중에서 접속된 유저만 뽑아서 currentUser 리스트에 담아 반환한다.
+		List<CommunityGuestDetail> currentUser = new ArrayList<CommunityGuestDetail>();
+		for (Long current : keySet) {
+			System.out.println("해당방의 모든유저 : " + current);
+			for(CommunityGuestDetail saved : guests) {
+				if(current == saved.getUserNo()) {
+					currentUser.add(saved);
+					System.out.println("접송중인 유저 : " + saved);
+				}
+			}
+		}
+		obj.put("currentUser", currentUser);
+		
+		// 키로 세션하나씩 꺼내서 메세지 전송
+		for (Long s : keySet) {
+			System.out.println("keyset : " + s);
+			WebSocketSession userSession = usersInCom.get(s);
+			userSession.sendMessage(new TextMessage(gson.toJson(obj)));
+		}
+	}
+	
+	/*
+	 * 브라우저로부터 텍스트 값을 받을 때 실행
+	 * @see org.springframework.web.socket.handler.AbstractWebSocketHandler#handleTextMessage(org.springframework.web.socket.WebSocketSession, org.springframework.web.socket.TextMessage)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+		super.handleTextMessage(session, message);
+		System.out.println("[[======= handleTextMessage() 실행 =======]]");
+		
+		// JSON 형태의 String 메세지를 받는다.
+		String data = message.getPayload();
+		
+		System.out.println("data : " + data);
+		
+		// JSON 데이터를 JSONObject로 파싱한다.
+		JSONObject object = jsonToObjectParser(data);
+		
+		System.out.println("object : " + object);
+		
+		// 타입체크용
+		long communityNo = Long.parseLong((String) object.get("communityNo"));
+		
+		// @@@@@@@@@@@@@@@@@@@@@@@ long으로 넘어오는게 문제내...
+		
+		String type = (String) object.get("type");
+		System.out.println("-- 타입 검사 --");
+		System.out.println("type : " + type);
+		
+		if("message".equals(type)) {
+			System.out.println("--- 'message'타입 진입 ---");
+			String msg = (String) object.get("msg");
+			long userNo = Long.parseLong((String) object.get("userNo"));
+			
+			System.out.println("-- 브라우저에서 받은 message 검사 --");
+			System.out.println("communityNo : " + communityNo);
+			System.out.println("userNo : " + userNo);
+			System.out.println("msg : " + msg);
+			
+			// 텍스트내용 db 저장 (contents 등록, 방금등록한 contents번호 조회,  writing등록)
+			// 저장후 커뮤니티컨텐츠 번호를 반환받는다.
+			long comContentNo = communityService.addContent(communityNo, userNo, msg);
+			
+			// 등록한 커뮤니티컨텐츠를 조회
+			CommunityContents newCommunityContents = communityService.getComContentByNo(comContentNo);
+			Date registeredDate = newCommunityContents.getRegisteredDate();
+			// 조회한 커뮤니티컨텐츠의 등록날짜 정보를 object에 담는다.	
+			object.put("registeredDate", registeredDate);
+			
+			// 문자열(Writings) 라는걸 알려주기
+			object.put("mainValue", "Writings");
+			
+			System.out.println("object : " + object);
+			
+			System.out.println("addContent 완료 후 메세지 전송 시작 단계 진입");
+			
+			// activedCommunities 조회해서 같은방에 있는 모든 웹세센에 내용 내려주기
+			HashMap<Long, WebSocketSession> usersInCom = activedCommunities.get(communityNo);
+			Set<Long> keySet = usersInCom.keySet();
+			
+			// 키로 세션 하나씩 꺼내서 메세지 전송
+			for (Long s : keySet) {
+				WebSocketSession userSession = usersInCom.get(s);
+				userSession.sendMessage(new TextMessage(gson.toJson(object)));
+			}
+		} else if ("update".equals(type)) {
+			System.out.println("--- 'update'타입 진입 ---");
+			long bjNo = Long.parseLong((String) object.get("bjNo"));
+			String communityPassword = (String) object.get("communityPassword");
+			String communityIntro = (String) object.get("communityIntro");
+			String communityTitle = (String) object.get("communityTitle");
+			
+			System.out.println("-- 브라우저에서 받은 message 검사 --");
+			System.out.println("communityNo : " + communityNo);
+			System.out.println("communityPassword : " + communityPassword);
+			System.out.println("communityIntro : " + communityIntro);
+			System.out.println("communityTitle : " + communityTitle);
+			System.out.println("bjNo : " + bjNo);
+			
+			// 기존 커뮤니티 정보 가져오기
+			Communities communities = new Communities();
+			communities.setNo(communityNo);
+			communities.setUserNo(bjNo);
+			communities.setPassword(communityPassword);
+			communities.setIntro(communityIntro);
+			communities.setTitle(communityTitle);
+					
+			Boolean isSuccess = communityService.updateCommunityByNo(communities);
+			
+			// 업데이트 실패 (방장이아닌 유저가 업데이트 요청)
+			if(!isSuccess) {
+				System.out.println(" --- 너 방장 아니잖아?! --- ");
+				object.clear();
+				object.put("type", "update");
+				object.put("status", "error");
+				session.sendMessage(new TextMessage(gson.toJson(object)));
+			}
+			// 업데이트 성공
+			// 방금업데이트한 정보를 조회해서 object에 담기
+			Communities updatedCommunity = communityService.getCommunityByNo(communityNo);
+			object.put("type", "update");
+			object.put("status", "success");
+			object.put("community", updatedCommunity);
+			
+			System.out.println("object : " + object);
+			
+			// 해당방에 접속중인 모든 유저에게 업데이트 정보 전송
+			HashMap<Long, WebSocketSession> usersInCom = activedCommunities.get(communityNo);
+			Set<Long> keySet = usersInCom.keySet();
+			
+			// 키로 세션 하나씩 꺼내서 메세지 전송
+			for (Long s : keySet) {
+				WebSocketSession userSession = usersInCom.get(s);
+				userSession.sendMessage(new TextMessage(gson.toJson(object)));
+			}
+			
+		} else if ("fileUpload".equals(type)) {
+			System.out.println("--- 'fileUpload'타입 진입 ---");
+			System.out.println(object);
+			long userNo = Long.parseLong((String)object.get("userNo"));
+			long contentNo = Long.parseLong((String)object.get("contentNo"));
+			
+			System.out.println("userNo : " + userNo);
+			System.out.println("contentNo : " + contentNo);
+			// 컨텐츠번호로 파일이름을 불러오기
+			CommunityContentDetail communityContentDetail = communityService.getComContentDetailByNo(communityNo, contentNo);
+			
+			System.out.println("등록한 파일객체 조회 : " + communityContentDetail);
+			
+
+			
+			// 파일 타입을 구별하고, 이름을 사용자가 등록했을때로 돌려준다.
+			if(null != communityContentDetail.getCommunityImgs()) {
+				//communityContentDetail.getCommunityImgs().setName(communityContentDetail.getCommunityImgs().getName().substring(17));
+				object.put("mainValue", "Images");
+			} else if (null != communityContentDetail.getCommunityFiles()) {
+				//communityContentDetail.getCommunityFiles().setName(communityContentDetail.getCommunityFiles().getName().substring(17));
+				object.put("mainValue", "Files");
+			};
+			
+			object.put("contents", communityContentDetail);		
+			
+			System.out.println("object : " + object);
+			
+			// 해당 커뮤니티의 웹소켓세션에게 파일 내려주기 
+			HashMap<Long, WebSocketSession> usersInCom = activedCommunities.get(communityNo);
+			System.out.println("활성화 커뮤니티에서 조회 usersInCom : " + usersInCom);
+			Set<Long> keySet = usersInCom.keySet();
+			
+			String toString = gson.toJson(object);
+			System.out.println("toString" + toString);
+			
+			// 키로 세션 하나씩 꺼내서 메세지 전송
+			for (Long s : keySet) {
+				WebSocketSession userSession = usersInCom.get(s);
+				System.out.println("전송세션 : " + userSession);
+				userSession.sendMessage(new TextMessage(toString));
+			}
+			
+			
+		} else if ("depart".equals(type)) { // 방탈퇴 기능
+			System.out.println(" --- depart 실행 --- ");
+			long userNo = Long.parseLong((String) object.get("userNo"));
+			// 유저 삭제
+			String commnityActived = communityService.deleteUserFromComGuest(communityNo, userNo);
+			System.out.println("유저삭제 완료!");
+			
+			// 커뮤니티 방이 여전히 존재하는 경우
+			if ("N".equals(commnityActived)) {
+				// 해당 방의 유저조회
+				List<CommunityGuestDetail> guests = communityService.getComGuestByNo(communityNo);
+				System.out.println("삭제 후 유저명단 : " + guests);
+				
+				// 활성화 커뮤니티 명단에서 해당 유저 제외
+				HashMap<Long, WebSocketSession> usersInCom = activedCommunities.get(communityNo);
+				System.out.println("삭제전 활성화 명단 : " + usersInCom);
+				usersInCom.remove(userNo);
+				System.out.println("삭제후 활성화 명단 : " + usersInCom);
+				object.clear();
+				object.put("type", "remove");
+				object.put("communityGuests", guests);
+
+				
+				// 방에 접속한 모든 유저 정보중에서 접속된 유저만 뽑아서 currentUser 리스트에 담아 반환한다.
+				List<CommunityGuestDetail> currentUser = new ArrayList<CommunityGuestDetail>();
+				for (Long current : usersInCom.keySet()) {
+					for(CommunityGuestDetail saved : guests) {
+						System.out.println(" 세션 제거 후 userNo : " + saved.getUserNo());
+						if(current == saved.getUserNo()) {
+							currentUser.add(saved);
+						}
+					}
+				}
+				object.put("currentUser", currentUser);
+				
+				String toString = gson.toJson(object);
+				
+				// 키로 세션하나씩 꺼내서 메세지 전송
+				for (Long s : usersInCom.keySet()) {
+					WebSocketSession userSession = usersInCom.get(s);
+					userSession.sendMessage(new TextMessage(toString));
+				}
+				
+			} else {
+				System.out.println(" --- 커뮤니티방 삭제됨 --- ");
+			}
+		}
+		
+		// @@ 파입업로드 type : file
+		
+//		// 타입이 "message"인 경우 
+//		if("message".equals(msgType)) {
+//			// 전달받은 메세지와 같은 방에 소속된 세션들에게 메세지를 전달한다.
+//			// 1. room객체에서 방번호와 일치하는 세션을 찾는다.
+//			HashMap<String, WebSocketSession> sameRoomSessions = rooms.get(roomNum);
+//			// 2. 방에 들어있는 세션값을 찾는다.
+//			Collection<WebSocketSession> sessionsByRoom = sameRoomSessions.values();
+//			// 3. 찾은 모든 세션에게 메세지를 전달한다.
+//			for(WebSocketSession s : sessionsByRoom) {
+//				// 브라우저로 메세지 전송
+//				s.sendMessage(new TextMessage(object.toJSONString()));
+//			}
+//		}
+//		if("fileUpload".equals(msgType)) {
+////			System.out.println(object);
+////			byte[] bytes = Base64Utils.decodeFromString((String)object.get("fileData"));
+////			FileCopyUtils.copy(bytes, new File("a.txt"));
+//			
+//		}
+//
+//		System.out.println("----- handleTextMessage() 종료 -----");			
+	}
+	
+	/*
+	 * 브라우저로부터 이미지, 파일 값을 받을 때 실행
+	 */
+	@Override
+	protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) {
+		System.out.println("----- handleBinaryMessage() 실행 -----");
+		System.out.println("message : " + message);
+		
+		// @@ 구현할 것
+		// 파일과 세션 => 매개변수로 받기
+		// 세션아이디와 유저번호 => 메세지로 받기
+		// 메세지와 파일과세션은 매개변수의 세션과 메세지의 세션아이디로 식별한다.
+		//------------------------------------------------
+		// 이미지, 파일 구별해서 등록하는 서비스 실행
+		// 세션으로 현재 커뮤니티에 접속한 인원에게 값 내려주기
+		// -----------------------------------------------
+		// 이 메소드 말고 커뮤니티의 컨텐츠전체 조회하는 로직 수정필요?? 파일도 읽어오긴 할텐데 체크해봐야함.
+		// 불러와서 뿌려줄때 일반내용, 파일, 이미지 구별해서 표현해야함
+		
+		//바이너리 메시지 발송
+		ByteBuffer byteBuffer = message.getPayload();
+		
+		System.out.println("byteBuffer : " + byteBuffer);
+		
+		String fileName = "temp.jpg";
+		File dir = new File(FILE_UPLOAD_PATH);
+		if(!dir.exists()) {
+			dir.mkdirs();
+		}
+		
+		File file = new File(FILE_UPLOAD_PATH, fileName);
+		FileOutputStream out = null;
+		FileChannel outChannel = null;
+		try {
+			byteBuffer.flip(); //byteBuffer를 읽기 위해 세팅
+			out = new FileOutputStream(file, true); //생성을 위해 OutputStream을 연다.
+			outChannel = out.getChannel(); //채널을 열고
+			byteBuffer.compact(); //파일을 복사한다.
+			outChannel.write(byteBuffer); //파일을 쓴다.
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				if(out != null) {
+					out.close();
+				}
+				if(outChannel != null) {
+					outChannel.close();
+				}
+			}catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		byteBuffer.position(0); //파일을 저장하면서 position값이 변경되었으므로 0으로 초기화한다.
+		
+		System.out.println("byteBuffer : " + byteBuffer);
+		System.out.println("----- handleBinaryMessage() 종료 -----");
+	}
+	
+	/**
+	 * 소켓과 연결이 끊길때 실행
+	 */
+	@SuppressWarnings({ "unused", "unchecked" })
+	@Override
+	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+		System.out.println("----- afterConnectionClosed() 실행 -----");
+		// TODO Auto-generated method stub
+		super.afterConnectionClosed(session, status);
+		
+		Long targetCommunityNo = null;
+		Long targetUserNo = null;
+		
+		System.out.println("activedCommunities : " + activedCommunities);
+		
+		// 해제되면 방에서 해당 세션 제거하는 코딩할것
+		for(Long activedCommunityNo : activedCommunities.keySet()) {
+			HashMap<Long, WebSocketSession> activedCommunity = activedCommunities.get(activedCommunityNo);
+			for(Long userNo : activedCommunity.keySet()) {
+				System.out.println(" 세션 제거 전 userNo : " + userNo);
+				if(session.equals(activedCommunity.get(userNo))) {
+					System.out.println("타켓방찾음 : " + activedCommunityNo);
+					System.out.println("타켓유저찾음 : " + userNo);
+					// 찾은 방번호 저장
+					targetCommunityNo = activedCommunityNo;
+					// 찾은 유저번호 저장
+					targetUserNo = userNo;
+				} 
+			}
+		}
+		
+		if(null == targetUserNo) {
+			System.out.println("타켓방 못찾음 : " + session.getId());
+			// 커뮤니티에 동일한 유저가 접속할때 activedCommunity에서 세션을 찾을 수 없어서 이 조건에 걸림.
+			return;
+		}
+		
+		// 커뮤니티 퇴장시 comguest actived_date 날짜 현재시간으로 업데이트
+		CommunityGuests communityGuests = communityService.getCommunityGuestsByNo(targetCommunityNo, targetUserNo);
+		communityService.updateComGuestActivedDate(communityGuests);
+		
+		
+		if(targetCommunityNo != null && targetUserNo != null) {
+			// 방에서 제거
+			System.out.println("제거전 : " + activedCommunities);
+			System.out.println("제거될세션의 방번호  : " + targetCommunityNo);
+			System.out.println("제거될세션의 유저번호  : " + targetUserNo);
+			System.out.println("제거될세션  : " + session);		
+			
+			
+			System.out.println("session id : " + session.getId());
+			System.out.println(("actived id : " + activedCommunities.get(targetCommunityNo).get(targetUserNo).getId()));
+			
+			if(session.equals(activedCommunities.get(targetCommunityNo).get(targetUserNo))) {
+				activedCommunities.get(targetCommunityNo).remove(targetUserNo);
+			}
+			
+			System.out.println("제거휴 : " + activedCommunities);
+			
+		}
+		
+		// 활성화된 방에서 해당방의 모든  유저 조회
+		HashMap<Long, WebSocketSession> usersInCom = activedCommunities.get(targetCommunityNo);
+		
+		
+		// 활성화방에 유저가 1명이상 있는경우
+		if(!usersInCom.isEmpty()) {	
+			System.out.println("방에 다른 유저가 남아있는경우");
+			// 해당방의 유저 조회
+			List<CommunityGuestDetail> guests = communityService.getComGuestByNo(targetCommunityNo);
+			
+			// 해당방에 소속된 모든 세션에게 해당방 세션리스트 내려줄것
+			JSONObject obj = new JSONObject();		
+			obj.put("type", "remove");
+			obj.put("communityGuests", guests);
+			
+			// 방에 접속한 모든 유저 정보중에서 접속된 유저만 뽑아서 currentUser 리스트에 담아 반환한다.
+			List<CommunityGuestDetail> currentUser = new ArrayList<CommunityGuestDetail>();
+			for (Long current : usersInCom.keySet()) {
+				for(CommunityGuestDetail saved : guests) {
+					System.out.println(" 세션 제거 후 userNo : " + saved.getUserNo());
+					if(current == saved.getUserNo()) {
+						currentUser.add(saved);
+					}
+				}
+			}
+			obj.put("currentUser", currentUser);
+			
+			// 키로 세션하나씩 꺼내서 메세지 전송
+			for (Long s : usersInCom.keySet()) {
+				WebSocketSession userSession = usersInCom.get(s);
+				userSession.sendMessage(new TextMessage(gson.toJson(obj)));
+			}
+			
+			// 활성화방에 아무도 없는경우 => 본인이 마지막이였음 => 커뮤니티 메인으로 이동시키기
+		} 
+
+		
+		System.out.println("----- afterConnectionEstablished() 종료 -----");
+	}
+	
+	/**
+	 * 웹소켓에 에러발생시 에러메시지 출력하는 메소드
+	 * @param session
+	 * @param exception
+	 * @throws Exception
+	 */
+	@Override
+	public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+		exception.printStackTrace();
+	}
+	
+	/**
+	 * 문자열을 JSON오브젝트 객체로 변환해서 반환하는 메소드
+	 * @param jsonStr
+	 * @return
+	 */
+	private static JSONObject jsonToObjectParser(String jsonStr) {
+		JSONParser parser = new JSONParser();
+		JSONObject obj = null;
+		try {
+			obj = (JSONObject) parser.parse(jsonStr);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return obj;
+	}
+
+}

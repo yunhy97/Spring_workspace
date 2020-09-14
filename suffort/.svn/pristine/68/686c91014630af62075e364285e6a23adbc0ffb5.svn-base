@@ -1,0 +1,198 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/resources/bootstrap/css/bootstrap.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script type="text/javascript" src="/resources/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="/resources/bootstrap/js/bootstrap.min.js"></script>
+<title>Insert title here</title>
+<style type="text/css">
+            @font-face {
+    font-family: 'paybooc-Bold';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-07@1.0/paybooc-Bold.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+body {
+	font-family: 'paybooc-Bold';
+}
+</style>
+</head>
+<body>
+<div class="container-fluid">
+	<div class="header">
+		<div class="row">
+			<div class="col-12 bg-light">
+				<%@ include file="../common/navbar.jsp" %>		
+			</div>
+		</div>
+	</div>
+
+	<div class="body" style="margin-top: 72px;">
+		<div class="row">
+			<div class="col-2 bg-light" >
+				<%@ include file="../common/sidebar-my.jsp" %>
+			</div>
+			<div class="col-10" id="content-div">
+				<div class="row mt-5">
+					<div class="col-12">
+						<nav class="nav nav-pills flex-column flex-sm-row">
+  							<a class="flex-sm-fill text-sm-center nav-link active" href="/common/career.do">경력</a>
+  							<a class="flex-sm-fill text-sm-center nav-link" href="/common/license.do">자격증</a>
+  						</nav>
+					</div>
+				</div>
+				<div class="row mt-3">
+					<div class="col-12">
+						<div class="card mb-3">
+							<div class="card-header">
+								<h5 class="card-title">※ 경력 추가</h5>
+							</div>
+							  
+						    <form id="career-submit" method="POST" action="/common/usercareerupdate.do" >
+ 								  <div class="card-body "> 
+								    	<div class="col-12">
+											<div class="row ml-1 mt-4 text-center">
+												<div class="col-3 sample mb-2">
+													회사명
+												</div>
+												<div class="col-8 mb-2 pl-0 pr-1 mr-2 form-group">
+													<input type="text" class="form-control form-control-sm career-info text-center" value="" name="companyName" placeholder="회사명을 입력하세요" />
+												</div>
+											</div>
+											
+											<div class="row ml-1 ">
+												<div class="col-3 sample mb-2 text-center" >
+													근속월수
+												</div>
+												<div class="col-2 mb-2 pl-0 pr-1 mr-2 form-group">
+													<input type="text" class="form-control form-control-sm career-info text-center" value="" name="month" placeholder="ex.12"  />
+												</div>
+												
+												<div class="col-2 mb-2 ml-3 pl-0 pr-0 text-center" style="padding-top:7px;">
+													직위
+												</div>
+												<div class="col-4 mb-2 pl-0 pr-0 mr-0 form-group">
+													<input type="text" class="form-control form-control-sm career-info text-center" value="" name="jobContent" placeholder="ex.차장"  />
+												</div>
+											</div>
+											
+											<div class="row ml-1">
+												<div class="col-3 sample mb-2">
+													&emsp;직책
+												</div>
+												<div class="col-8 pl-0 pr-1 mr-2 mb-4 form-group">
+													<input type="text" class="form-control form-control-sm career-info text-center" value="" name="jobPosition" placeholder="ex.개발 및 서버관리"  />
+													<input type="hidden" class="form-control form-control-sm career-info text-center" value="${LOGIN_USERS.no }" name="userNo" />
+												</div> 
+											</div>
+											
+										</div>
+								  </div>
+								  <div class="card-footer pb-0 mt-0 bg-white">
+										<div class="col-12 mb-5 text-right" >
+											<c:if test="${pageContext.request.requestURI ne '/WEB-INF/views/board/userBoardWrite.jsp'}">
+													<button type="reset" class="btn btn-danger " id="cancel-career-btn">리셋</button>	
+													<button type="submit" class="btn btn-primary " id="confirm-career-btn">추가</button>	
+											</c:if>
+										</div>
+								  </div>
+						    </form>
+						</div>							  
+					</div>
+				</div>
+				<div class="row mt-3">
+					<div class="col-12">
+						<table class="table table-hover" id="table-career">
+					
+						  <thead>
+						    <tr>
+						      <th scope="col">회사명</th>
+						      <th scope="col">근속월수</th>
+						      <th scope="col">직위</th>
+						      <th scope="col">직책</th>
+						      <th scope="col">#</th>
+						    </tr>
+						  </thead>
+						  
+						  <tbody>
+						  </tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(function(){
+
+  	$.ajax({
+		type: "GET",
+		url: "/common/careerajax.do",
+		dataType: "json",
+		success: function (results) {
+			 var $tbody = $("#table-career tbody").empty();
+			 $.each(results, function(index, result) {
+				 console.log(result);
+				 var tr = "<tr>";
+					tr += "<td>"+result.companyName+"</td>";
+					tr += "<td>"+result.month+"</td>";
+					tr += "<td>"+result.jobContent+"</td>";
+					tr += "<td>"+result.jobPosition+"</td>";
+					tr += "<td><button class='btn btn-danger btn-sm' data-no='"+result.no+"' ajaxbtn>삭제</button></td>";
+					tr += "<tr>";
+					
+					$tbody.append(tr);
+			 })
+			 
+		 } 
+	})
+	 
+	
+	$("tbody").on("click", ".ajaxbtn", function() {
+		$.ajax({
+			type: "POST",
+			url: "/common/careerajaxdel.do",
+			dataType: "JSON",
+			contentType : "application/x-www-form-urlencoded",
+			success: function (results) {
+				console.log(results)
+				$(this).parent().remove();
+				
+			}
+		})
+	})
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+})
+
+
+</script>
+</body>
+</html>

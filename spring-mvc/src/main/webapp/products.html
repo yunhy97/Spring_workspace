@@ -84,7 +84,7 @@
         			<button type="button" class="close" data-dismiss="modal">&times;</button>
       			</div>
       			<div class="modal-body">
-        			<form id="product-form" method="post" action="/rest/products.do">
+        			<form id="product-form" method="post" action="">
 						<div class="form-group">
 							<label>카테고리</label>
 							<select class="form-control" name="catId" id="category-id">
@@ -110,7 +110,7 @@
       			</div>
       			<div class="modal-footer">
         			<button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-        			<button type="button" class="btn btn-primary">등록</button>
+        			<button type="button" class="btn btn-primary" id="btn-add-product">등록</button>
       			</div>
     		</div>
   		</div>
@@ -120,6 +120,7 @@
 <script type="text/javascript" src="/resources/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript">
 $(function() {
+	/*
 	$.ajax({
 		type:"GET",
 		url:"/json/products.do",
@@ -165,6 +166,99 @@ $(function() {
 	$("#btn-open-form").click(function() {
 		$("#modal-product-form").modal("show")
 	})
+	*/
+	//모든 상품 조회하기
+	//요청방식 : GET
+	//요청URL : /rest/products
+	//요청데이터 : 없음
+	//응답데이터 : [{}]
+	$.ajax({
+		type:"GET",
+		url:"/rest/products/",
+		dataType:"json",
+		success:function(products){
+			var $tbody = $("#table-product-list tbody").empty();
+			$.each(products, function(index, product){
+				var tr = "<tr>";
+				tr += "<td>"+product.no+"</td>";
+				tr += "<td>"+product.name+"</td>";
+				tr += "<td>"+product.price+" 원</td>";
+				tr += "<td><button class='btn btn-primary btn-sm' data-no='"+product.no+"'> 상세 </button> <button class='btn btn-danger btn-sm' data-no='"+product.no+"'>삭제</button></td>";
+				tr += "</tr>";
+				
+				$tbody.append(tr);
+			})
+		}
+	})
+	
+	//상세버튼 클릭시 상품 상세 정보 조회
+	//요청방식 : GET
+	//요청 URL : /rest/products/상품번호
+	//요청데이터 : 없음
+	//응답데이터 : {"no":10, "name":"아이폰", "price":1600000, "stock":100,...}
+	$("#table-product-list tbody").on('click', 'button.btn-primary', function() {
+		var productNo = $(this).data("no");
+		
+		$.ajax({
+			type:"GET",
+			url:"/rest/products/"+productNo,
+			dataTpe:"json",
+			success:function(product) {
+				$("#table-product td:eq(0)").text(product.no);
+				$("#table-product td:eq(1)").text(product.stock);
+				$("#table-product td:eq(2)").text(product.name);
+				$("#table-product td:eq(3)").text(product.price);
+				$("#table-product td:eq(4)").text(product.discountPrice);
+				
+				$("#modal-product").modal("show");
+			}
+		});
+	})
+	
+	//상품등록번튼을 클릭하면 상품정보 입력 모달이 화면에 표시된다.
+	$("#btn-open-form").click(function() {
+		$("#modal-product-form").modal("show");
+	});
+	
+	//등록버튼 클릭시 새 상품 등록하기
+	//요청방식 : POST
+	//요청 URL : /rest/products/
+	//요청데이터 : {"category":"디지털","name":"맥북프로","price":1500000,"discountPrice":1450000}
+	//응답데이터: {"no":10, "category":"디지털", ..., "createDate":1567867567896}
+	$("#btn-add-product").click(function() {
+		var product = {
+				catId:$("#category-id").val(),
+				name:$("#product-name").val(),
+				price:$("#product-price").val(),
+				discountPrice:$("#product-discount-price").val()
+				
+		}
+		$.ajax({
+			type:"POST",
+			url:"/rest/products/",
+			data:JSON.stringify(product),
+			contentType:"application/json",	//클라이언트가 서버로 보내는 데이터 타입
+			dataType:"json",				//서버로부터 받은 응답 데이터의 타입
+			success:function(savedProduct) {
+				var tr = "<tr>";
+				tr += "<td>"+savedProduct.no+"</td>";
+				tr += "<td>"+savedProduct.name+"</td>";
+				tr += "<td>"+savedProduct.price+" 원</td>";
+				tr += "<td><button class='btn btn-primary btn-sm' data-no='"+savedProduct.no+"'> 상세 </button> <button class='btn btn-danger btn-sm' data-no='"+savedProduct.no+"'>삭제</button></td>";
+				tr += "</tr>";
+				
+				//새로 저장된 상품정보를 테이블의 맨 첫번째 행에 추가
+				$("#table-product-list tbody").prepend(tr);
+				//입력필드 초기화
+				$("#category-id").val("");
+				$("#product-name").val("");
+				$("#product-price").val("");
+				$("#product-discount-price").val("");
+				//모달창 닫기
+				$("#modal-product-form").modal("hide");
+			}
+		})
+	});
 })
 </script>
 </body>

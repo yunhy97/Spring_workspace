@@ -29,8 +29,13 @@ public class ProductServiceImpl implements ProductService{
 		return productDao.getAllProducts();
 	}
 	@Override
-	public void addNewProduct(Product product) {
+	public Product addNewProduct(Product product) {
+		//insert작업이 완료되면 product의 no 프로퍼티에 시퀀스값이 저장된다.
 		productDao.insertProduct(product);
+		
+		//insert작업 완료후 product의 no에 저장된 상품번호로 저장된 상품상세정보를 조회한다.
+		Product savedProduct = productDao.getProductByNo(product.getNo());
+		return savedProduct;
 	}
 	
 	@Override
