@@ -66,17 +66,17 @@
 					<div class="col-12 p-3">
 						<div id="commuListArea" class="row">
 							<div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-12 d-flex justify-content-center p-2">
-								<!-- 고정 -->
-								<div id="defaultForm" class="card bg-light p-1" style="width: 100%; display: block;">
-									<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTHcieD3HYe86IANMcc_6B7ThBQeqakRQMz0g&usqp=CAU" alt="thumnailOfUser" class="card-img-top p-1" style="width: 100%; height: 50%;">
-									<div class="card-body p-1">
-										<h6 class="card-title font-weight-bold">커뮤니티 생성</h6>
-										<p class='card-text'>커뮤니티를 생성하고, 다양한 정보를 교류해보세요.</p>
-										<p class='card-text'>NEW,COMMUNITY,FREE</p>
-										<a href="#" class="btn btn-primary btn-block" onclick="createForm()">New Community</a>
-										
+								<div id="defaultForm" class="card box-shadow" style="height:450px;">
+									<img src='../../resources/contentfile/whale.png' alt='thumnailOfUser' class='card-img-top p-1' style='width:100%; height:50%;'>
+									<div class="card-body d-flex flex-column pb-3 pt-1">
+										<h6 class='card-title font-weight-bold'>커뮤니티 생성</h6>
+						         		<p class='card-text'>커뮤니티를 생성해보세요</p>
+						         		<p class='card-text'>NEW,COMMUNITY,FREE</p>
+										<button type="button" class="align-self-end btn btn-lg btn-block btn-outline-info"  onclick="createForm()" style="margin-top: auto;">CREATE</button>
 									</div>
 								</div>
+								
+								
 								<!-- 커뮤니티 생성폼 -->
 								<div id="createForm" class="card bg-light p-1" style="width: 250px; display: none">
 									<div class="card-body p-1">
@@ -105,7 +105,8 @@
 															 data-toggle="modal" data-target="#tag-list" style="width: 130px;" readonly="readonly">
 												</div>
 								        	</div>
-								        	<button type="button" class="btn btn-primary btn-block" id="new-community">New Community</button>
+								        	<button type="button" class="btn btn-block btn-outline-info" id="new-community">New Community</button>
+								        	<button type="button" class="btn btn-block btn-outline-danger" id="back-community">back</button>                                          
 										</form>
 									</div>
 								</div>
@@ -136,8 +137,11 @@
 								<div class="modal fade" id="checkPassword-form" tabindex="-1"
 									aria-labelledby="hashtag-list" aria-hidden="true">
 									<div class="modal-dialog">
-										<div class="modal-content">
-											<div class="modal-body" id="checkPassword-body">
+										<div class="modal-content text-center">
+											
+											<h1 class="mt-2">Input Password</h1>
+											
+											<div class="modal-body pt-0" id="checkPassword-body">
 												<div class="input-group mb-3 input-group-sm">
 													<input type="password" id="checkPassword-password" class="form-control" placeholder="Password">
 													<input type="hidden" id="checkPassword-commuNo" value="">
@@ -154,8 +158,10 @@
 										</div>
 									</div>
 								</div>
-
 							</div>
+							
+							<!-- 커뮤니티 리스트 출력 위치 -->
+							
 						</div>
 					</div>
 				</div>
@@ -179,10 +185,12 @@ function retrieveCommunity() {
 			/* 커뮤니티 번호, 커뮤니티 생성자 번호는 입장시 쿼리스트링에 붙여서 가야함. */
 			/* 태그표시, 게스트수표시, 이미지표시, 만들어진날짜표시 추가해야함. */
 			communuty  +="<div class='col-xl-2 col-lg-3 col-md-4 col-sm-6 col-12 d-flex justify-content-center p-2'>"
-					   + "<div class='card bg-light p-1' style='width:100%'>"
+					   + "<div class='card box-shadow' style='height:450px;'>"
 					   + "<div id='checkPassword-"+value.commuNo+"' style='display:none;'>"+value.commuPassword+"</div>"
 		     		   + "<img src='../../resources/contentfile/"+ value.commuImg +"' download alt='thumnailOfUser' class='card-img-top p-1' style='width:100%; height:50%;'>"
-		    		   + "<div class='card-body p-1'>"
+					   
+		    		   + "<div class='card-body d-flex flex-column'>"
+		    		   
 		         	   + "<h6 class='card-title font-weight-bold'>" + value.commuTitle + "</h6>"
 		         	   + "<p class='card-text'>" + value.commuIntro + "</p>"
 		         	   + "<p class='card-text'>" + 
@@ -190,8 +198,10 @@ function retrieveCommunity() {
 		         		   tag
 					   })	
 					   + "</p>"
-		         	   + "<a href='#' class='btn btn-outline-info btn-block' onclick='checkCommuPassword("+ value.commuNo +")'>JOIN</a>"
-		     		   + "</div></div></div>";
+		         	   + "<button type='button' class='align-self-end btn btn-lg btn-block btn-outline-info' style='margin-top: auto;' onclick='checkCommuPassword("+ value.commuNo +")'>JOIN</button>"
+		         	   + "</div>" 
+		         	   + "</div></div>";		     		   
+		     		 
 		})
 		$("#commuListArea").append(communuty);
 	})
@@ -273,6 +283,15 @@ function createForm() {
 	getAllTags();
 }
 
+// 커뮤니티 생성 폼 취소
+$('#back-community').click(function () {
+	$("#defaultForm").show();
+	$("#tagForm").hide();
+	$("#createForm").hide();
+	$("#commu-title").val('');
+	$("#commu-content").val('');
+	$("#commu-password").val('');
+})
 
 
 

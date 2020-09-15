@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.sample.dao.UserDao;
 import com.sample.web.form.UsersForm;
+import com.sample.web.form.UsersUpdateForm;
 import com.sample.web.vo.Companies;
 import com.sample.web.vo.Users;
 
@@ -49,10 +50,20 @@ public class UserServiceImpl implements UserService{
 		userDao.insertUser(userForm);
 	}
 	
+//	@Override
+//	public void modifyUserDetail(Users user) {
+//		
+//		userDao.updateUser(user);
+//	}
+	
 	@Override
-	public void modifyUserDetail(Users user) {
+	public void modifyUserDetail(UsersUpdateForm usersUpdateForm) {
 		
-		userDao.updateUser(user);
+		if (usersUpdateForm.getImg() == null) {
+			Users users = userDao.selectUserByNo(usersUpdateForm.getNo());
+			usersUpdateForm.setImg(users.getImg());
+		}
+		userDao.updateUser(usersUpdateForm);
 	}
 
 //	@Override

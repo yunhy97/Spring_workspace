@@ -208,7 +208,6 @@
 			nvl(a.company_address, ' ')			as address,
 			nvl(a.company_url, ' ')				as url,
 			a.company_started_date				as startedDate,
-			nvl(a.company_income, ' ')			as income,
 			nvl(sum(b.compboard_warnings), 0)	as sumWarning,
 			nvl(sum(b.compboard_user_likes), 0)	as sumUserLike,
 			count(b.compboard_no)				as boardCnt,

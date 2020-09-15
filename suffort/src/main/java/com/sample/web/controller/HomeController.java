@@ -113,7 +113,7 @@ public class HomeController {
 	
 	@GetMapping("/searchmore.do")
 	@ResponseBody
-	public Map<String, Object> more(@RequestParam(value="pageNo", required=false, defaultValue="1") int pageNo,
+	public Map<String, Object> more(@RequestParam(value="pageNo", required=false, defaultValue="1") int pageNo,@RequestParam(value="userNo", required=false, defaultValue="0") long userNo,
 			@RequestParam(value="tagNo",required=false,defaultValue="-1") long tagNo,
 			@RequestParam(value="keyword", required=false) String keyword,
 			@RequestParam(value="typelist", required=false) String typelist, Model model, Users users, Companies companies) {

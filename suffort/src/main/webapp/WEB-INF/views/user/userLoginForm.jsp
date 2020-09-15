@@ -35,7 +35,7 @@
 		<div class="row">
 			<div class="offset-4"></div>
 			<div class="col-4" >
-				<div class="card" style="margin-top:230px">
+				<div class="card" id="card-id" style="margin-top:230px; background-color: rgba(245, 245, 245, 1); opacity: 0.0;">
 					<div class="card-body">
 					<c:choose>
 						<c:when test="${param.error eq 'fail' }">
@@ -71,24 +71,11 @@
 								<a href="/user/usersignupform.do" class="btn btn-success float-left">회원가입</a>
 								<button type="submit" class="btn btn-primary float-right">로그인</button>
 							</div>
-						</form>
-					</div>
-				</div>
-
-				<br>
-
-				<c:choose>
-					<c:when test="${LOGIN_USERS.id != null}">
-						<h2> 네이버 아이디 로그인 성공하셨습니다!! </h2>
-						<h3>아이디 '${LOGIN_USERS.id}' 님 환영합니다! </h3>
-						<h3>별명 '${LOGIN_USERS.name}' 님 환영합니다! </h3>
-						<h3><a href="/logout.do">로그아웃</a></h3>
-					</c:when>
-					
-					<c:otherwise>
-						<div class="card">
-							<div class="card-body">
-								<div class="text-center" style="margin-top:20px; margin-bottom:20px">
+							
+							<br>
+							<br>
+							<div>
+								<div class="text-center" style="margin-top:20px; margin-bottom:10px">
 									이미 아이디가 있으신가요?
 								</div>
 								<!-- 네이버 로그인 창으로 이동 -->
@@ -96,10 +83,12 @@
 								<!-- url은 LoginController에서 셋팅한 키 url의 값 -->
 								<img width="223" src="https://developers.naver.com/doc/review_201802/CK_bEFnWMeEBjXpQ5o8N_20180202_7aot50.png"/></a></div>
 							</div>
-						</div>
-					</c:otherwise>
-				</c:choose>
-				
+						</form>
+					</div>
+				</div>
+ 
+				<br>
+
 			</div>
 			<div class="offset-4"></div>
 
@@ -109,7 +98,17 @@
 <script type="text/javascript" src="/resources/jquery/jquery.min.js"></script>
 <script type="text/javascript" src="/resources/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript">
+	var images = ['alone.gif', 'block.gif', 'dotman.gif', 'forest.gif', 'ill.gif', 'next.gif', 'oct.gif', 'pizza.gif', 'sunset.gif', 'rainbow.gif'];
+	$('body').css({'background-image': 'url(/resources/img/1920bg/' + images[Math.floor(Math.random() * images.length)] + ')',"background-size": "cover"});
 
+	$(function() {
+		$("#card-id").hover(function() {
+			$(this).css("opacity", "0.9");
+		}, function() {
+			$(this).css("opacity", "0.0");
+		})
+	})
+	
 </script>	
 </div>
 </body>

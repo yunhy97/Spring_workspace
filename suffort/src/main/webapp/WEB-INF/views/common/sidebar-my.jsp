@@ -13,18 +13,35 @@
     		top: 120px;
     	}
     	
+    	input[type="file"] {
+		  width: 90px;
+		  height: 38px;
+		  border-radius: 2px;
+		  border: 1px solid #ccc;
+		  margin-right: 5px;
+		}
+		
     </style>
     
 <div style="height: 800px;" class="text-white" id="sticky">
 	<c:choose>
 		<c:when test="${not empty param.userNo and param.userNo ne LOGIN_USERS.no   }">
+		
 			<div class="text-center mt-5 mb-2">
 				<c:choose>
-					<c:when test="${user.gender eq 'M'}">
-						<img src="../../resources/img/kakao_lion_mask.png" width="250px;" />
+					<c:when test="${empty user.img }"> <!-- 남의 저장된 사진이 없는 경우 -->
+						<c:choose>
+							<c:when test="${user.gender eq 'M'}">
+								<img src="../../resources/img/kakao_lion_mask.png" width="250px;" />
+							</c:when>
+							<c:when test="${user.gender eq 'F'}">
+								<img src="../../resources/img/kakao_apeach_mask.png" width="250px;" />
+							</c:when>
+						</c:choose>
 					</c:when>
-					<c:when test="${user.gender eq 'F'}">
-						<img src="../../resources/img/kakao_apeach_mask.png" width="250px;" />
+					
+					<c:when test="${not empty user.img}"> <!-- 남의 저장된 사진이 있는 경우 -->
+						<img src="/resources/img/uploadimg/${user.img}" width="250px;" height="250px;" class="logo-pre"/>
 					</c:when>
 				</c:choose>
 			</div>
@@ -36,6 +53,7 @@
 							&emsp;이름
 						</div>
 						<div class="col-4 mb-2 pr-0">
+							<input type="hidden" class="form-control form-control-sm user-info text-center" value="${user.no }" name="no" id="user-no" disabled />
 							<input type="text" class="form-control form-control-sm user-info text-center" value="${user.name }" name="name" id="user-name" disabled />
 						</div>
 						
@@ -93,25 +111,37 @@
 		
 		
 		<c:otherwise>
-			<div class="text-center mt-5 mb-2">
-				<c:choose>
-					<c:when test="${LOGIN_USERS.gender eq 'M'}">
-						<img src="../../resources/img/kakao_lion_mask.png" width="250px;" />
-					</c:when>
-					<c:when test="${LOGIN_USERS.gender eq 'F'}">
-						<img src="../../resources/img/kakao_apeach_mask.png" width="250px;" />
-					</c:when>
-				</c:choose>
-			</div>
-			
 			<div class="row" style="font-size:14px; padding:0px; margin:0px;">
+				<form id="info-submit" method="POST" action="/board/userinfoupdate.do" enctype="multipart/form-data">
 				
-				<form id="info-submit" method="POST" action="/board/userinfoupdate.do" >
+				<div class="text-center mt-5 mb-5" id="preview">
+					<c:choose>
+						<c:when test="${empty LOGIN_USERS.img }"> <!-- 내 저장된 사진이 없는 경우 -->
+							<c:choose>
+								<c:when test="${LOGIN_USERS.gender eq 'M'}">
+									<img src="../../resources/img/kakao_lion_mask.png" width="250px;" height="250px;" class="logo-pre"/>
+								</c:when>
+								<c:when test="${LOGIN_USERS.gender eq 'F'}">
+									<img src="../../resources/img/kakao_apeach_mask.png" width="250px;" height="250px;" class="logo-pre"/>
+								</c:when>
+							</c:choose>
+						</c:when>
+						<c:when test="${not empty LOGIN_USERS.img }"> <!-- 내 저장된 사진이 있는 경우 -->
+							<img src="../../resources/img/uploadimg/${LOGIN_USERS.img}" width="250px;" height="250px;" class="logo-pre"/>
+						</c:when>
+					</c:choose>
+					
+					<div class="offset-8"  style="margin-right:17px">
+						<input type="file" class="form-control form-control-sm user-info text-center img-pre mt-1" accept=".jpg, .png" value="../../resources/img/uploadimg/${LOGIN_USERS.img }" name="upfile" class="logo-pre" id="user-img" disabled />
+					</div>
+				</div>
+				
 					<div class="row border-bottom ">
 						<div class="col-2 sample">
 							&emsp;이름
 						</div>
 						<div class="col-4 mb-2 pr-0">
+							<input type="hidden" class="form-control form-control-sm user-info text-center" value="${LOGIN_USERS.no }" name="no" id="user-no" disabled />
 							<input type="text" class="form-control form-control-sm user-info text-center" value="${LOGIN_USERS.name }" name="name" id="user-name" disabled />
 						</div>
 						
@@ -191,10 +221,8 @@
 	
  $(function() {
 	 $("#user-delete").click(function(){
-		 alert("탈퇴가 완료되었습니다. 잔여 정보 삭제를 원하는 네이버 회원은 suffort 사이트를 연결해제 해주세요!");
+		 alert("탈퇴가 완료되었습니다. 잔여 정보 삭제를 원하는 네이버 회원은 suffort 사이트를 연결해제 해주시기 바랍니다");
 	 })
-	 
-	 
 	 
 	 $('#confirm-user-btn').hide();
 	 $('#cancel-user-btn').hide();
@@ -232,7 +260,22 @@
 		$('#info-submit').submit();
 	})
 	 
+	
 	 
+	$(".img-pre").on('change', function(){
+	    readInputFile(this);
+	});
+	
+	function readInputFile(input) {
+	    if(input.files && input.files[0]) {
+	        var reader = new FileReader();
+	        reader.onload = function (e) {
+	        	$('.logo-pre').attr('src', e.target.result);
+	        }
+	        reader.readAsDataURL(input.files[0]);
+	        
+	    }
+	}
 	 
 
  })

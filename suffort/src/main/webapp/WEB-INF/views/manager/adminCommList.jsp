@@ -82,8 +82,9 @@ body {
 							</div>
 						</div>
 					</div>
-					<div class="col-4">
-						<!-- 커뮤니티에서 사용한 태그 조회 	
+					
+					<!--<div class="col-4">
+						 커뮤니티에서 사용한 태그 조회 	
 						<div class="row">
 							<div class="col">
 								<div class="card">
@@ -156,8 +157,8 @@ body {
 									</div>
 								</div>
 							</div>
-						</div> 	-->		
-					</div>
+						</div> 		
+					</div>-->	
 				</div>
 			</div>
 		</div>
@@ -184,7 +185,7 @@ function communityList() {
 					row += '<tr class="text-muted">'
 				}
 				row +="<td>"+community.commuNo+"</td>";
-				row +="<td id='commTitle'>"+community.commuTitle+"</td>";
+				row +="<td id='commTitle'>"+community.commuTitle+"</a></td>";
 				row +="<td>"+community.userId+"("+community.guestGrade+")</td>";
 				row +="<td>"+community.commuRange+"</td>";
 				if (community.password == null) {

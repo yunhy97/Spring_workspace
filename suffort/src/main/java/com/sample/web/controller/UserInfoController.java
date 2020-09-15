@@ -60,9 +60,12 @@ public class UserInfoController {
 	
 	// 사용자 정보 업데이트
 	@RequestMapping(value = "/board/userinfoupdate.do", method = RequestMethod.POST )
-	public String userInfoUpdate(Users users, UsersUpdateForm userUpdateForm) {
+	public String userInfoUpdate(Users users, UsersUpdateForm usersUpdateForm) throws Exception {
 		
-		BeanUtils.copyProperties(userUpdateForm, users);
+		System.out.println("받아온 폼 번호" + usersUpdateForm.getNo());
+		
+		String prevLogo = users.getImg();
+		BeanUtils.copyProperties(usersUpdateForm, users);
 		
 		// 위와 동일
 //		users.setEmail(userUpdateForm.getEmail());
@@ -70,8 +73,28 @@ public class UserInfoController {
 //		users.setGender(userUpdateForm.getGender());
 //		users.setGitAddr(userUpdateForm.getGitAddr());
 //		users.setBirth(userUpdateForm.getBirth());
+
+		// 추가 코드 (첨부파일)
+		// 파일 업로드로 throws 추가
+		MultipartFile upfile = usersUpdateForm.getUpfile();
 		
-		userService.modifyUserDetail(users);
+		if (!upfile.isEmpty()) {
+			String filename = upfile.getOriginalFilename();
+			File file = new File(saveUploadImg, filename);
+			FileCopyUtils.copy(upfile.getInputStream(), new FileOutputStream(file));
+			
+			// ★ 업데이트할 img를 폼에 집어넣는다
+			usersUpdateForm.setImg(filename);
+			// ★세션의 값을 img에 집어넣는다
+			users.setImg(filename);
+			
+//			System.out.println(companiesUpdateForm.getLogo());
+		} else {
+			users.setImg(prevLogo);
+		}
+		
+//		userService.modifyUserDetail(users);
+		userService.modifyUserDetail(usersUpdateForm);
 		
 		return "redirect:/board/userMyPage.do";
 	}
@@ -205,6 +228,7 @@ public class UserInfoController {
 		// hidden으로 no를 넣게끔 셋팅해놨음, mapper에서 where = no로 update문을 실행할것임
 		
 //		BeanUtils.copyProperties(companies, savedCompanies);
+		String prevLogo = companies.getLogo();
 		BeanUtils.copyProperties(companiesUpdateForm, companies);
 		
 //		companies.setNo(companiesUpdateForm.getNo());...content 등 이것들과 같겠지
@@ -223,15 +247,15 @@ public class UserInfoController {
 			companiesUpdateForm.setLogo(filename);
 			// ★세션의 값을 logo에 집어넣는다
 			companies.setLogo(filename);
-			
-//			System.out.println(companiesUpdateForm.getLogo());
+		} else {
+			companies.setLogo(prevLogo);
 		}
 
 //		companyService.modifyCompaniesDetail(companies);
 		companyService.modifyCompaniesDetail(companiesUpdateForm);
 		System.out.println("회사 정보 업데이트 성공!");
 		
-		return "redirect:/board/compMyPage.do";
+		return "redirect:/board/compMyPage.do?companyNo="+ companies.getNo();
 	}
 
 	

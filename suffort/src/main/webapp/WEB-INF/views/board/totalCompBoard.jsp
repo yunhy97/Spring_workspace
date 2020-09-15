@@ -65,7 +65,7 @@ body {
 							<div class="col-3" >
 								<div class="card" style="width: 21rem; height: 380px;">
 								  <div class="card-body">
-								  	<a class="d-flex justify-content-center mt-5 pt-1" href="compBoardWrite.do"><img src="../../resources/img/pencil_whale.png" class="card-img-top " alt="..." style="width: 200px;'height: 200px; " id="hover-src"></a>
+								  	<a class="d-flex justify-content-center mt-5 pt-1" href="compBoardWrite.do?companyNo=${LOGIN_USERS.no }"><img src="../../resources/img/pencil_whale.png" class="card-img-top " alt="..." style="width: 200px;'height: 200px; " id="hover-src"></a>
 								  </div>
 								</div>
 							</div>
@@ -141,7 +141,7 @@ body {
 								</colgroup>
 								<tbody>
 									<tr>
-										<th>썸네일</th><td colspan="3"><img src="../../resources/img/gray.jpg" alt="..." style="height: 180px; width: 100%"></td>
+										<th>썸네일</th><td colspan="3"><img id="compimg" src="../../resources/img/gray.jpg" alt="..." style="height: 180px; width: 100%"></td>
 									</tr>
 									<tr>
 										<th>기업이름</th><td></td>
@@ -204,13 +204,12 @@ $(function() {
 					row2 += '<div class="card mb-3" style="width: 21rem;  height: 380px;">';
 					
 					if (compBoard.companyLogo == "../../resources/img/suffort.png") {
-						row2 += ' <a href="compBoardDetail.do?compBoardNo="'+compBoard.compBoardNo+'><img src='+compBoard.companyLogo+ ' class="card-img-top" alt="..." style="height: 180px;"></a>';						
+			            row2 += '<a href="compBoardDetail.do?compBoardNo='+compBoard.compBoardNo+'&companyNo='+compBoard.companyNo+'"><img src=/resources/img/comp_default_logo_1.png class="card-img-top" alt="..." style="height: 180px;"></a>';
 					} else {
-					row2 += ' <a href="compBoardDetail.do?compBoardNo="'+compBoard.compBoardNo+'><img src=/resources/img/uploadimg/'+compBoard.companyLogo+ ' class="card-img-top" alt="..." style="height: 180px;"></a>';
-						
+		                row2 += '<a href="compBoardDetail.do?compBoardNo='+compBoard.compBoardNo+'&companyNo='+compBoard.companyNo+'"><img src=/resources/img/uploadimg/'+compBoard.companyLogo+' class="card-img-top" alt="..." style="height: 180px;"></a>';
 					}
 					row2 += '<div class="card-body">';
-					row2 += '<h5 class="card-title" style="height: 43px;"><a href="compBoardDetail.do?compBoardNo='+compBoard.compBoardNo+'" class="text-dark">'+compBoard.compBoardTitle+'</a></h5>';
+					row2 += '<h5 class="card-title" style="height: 43px;"><a href="compBoardDetail.do?compBoardNo='+compBoard.compBoardNo+'&companyNo='+compBoard.companyNo+'" class="text-dark">'+compBoard.compBoardTitle+'</a></h5>';
 					row2 += '<div style="height: 37px;">';
 					$.each(compBoard.tags, function(index, tag){
 						row2 += '<p class="badge badge-secondary mr-1" data-tag-no='+tag.tagNo+'>'+tag.tagName+'</p>';
@@ -312,6 +311,7 @@ $(function() {
 			dataType: "json",
 			success:function(compBoard) {
 				console.log(compBoard);
+				$("#compimg").attr('src', '../../resources/img/uploadimg/' + compBoard.companyLogo);
 				$("#table-summary-list td:eq(1)").text(compBoard.companyName);
 				$("#table-summary-list td:eq(2)").text(compBoard.companyUrl);
 				$("#table-summary-list td:eq(3)").text(compBoard.compBoardTitle);

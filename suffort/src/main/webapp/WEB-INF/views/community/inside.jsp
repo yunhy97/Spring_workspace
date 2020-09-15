@@ -98,60 +98,63 @@
         </div>
                 
         
-        <div class="row" style="margin-top: 85px;">
+        <div class="row" style="margin-top: 82px;">
             <!-- sidebar -->
-            <div class="col-2 m-0 p-0" id="sidebar" >
-                <div style="position: fixed;">
+            <div class="col-2 m-0 p-0"  id="sidebar" >
+                <div style="position: fixed; ">
                     <div class="row m-0 p-0" id="sidebarW">
                     	<!-- sidebar-header -->
-                        <div class="col-12 bg-secondary m-0 p-0"  id="sidebar-header" >
+                        <div class="col-12 m-0 p-0"  id="sidebar-header" style="background-image: url('https://whale-store.pstatic.net/20191111_63/1573440818118JES0l_PNG/nightwhale_img02.png');">
                         	
 							<!-- 무엇을 넣어야 할까? -->
 
                         </div>
                         <!-- sidebar-body -->
-                        <div class="col-12 bg-secondary" id="sidebar-body">
-                        	<!-- community-thumbnail -->
-                        	<div class="mt-3 d-flex justify-content-center">
-                                <img id="sidebar-communityImg" class="responsive" src="" style="max-width: 300px; width : 100%;">
-                            </div>
-                            <!-- user list -->
-                            <button class="dropdown-btn mt-3 font-weight-bold">User
-                                <i class="fa fa-caret-down"></i>
-                            </button>
-                            <div id="sidebar-users" class="dropdown-container flex-column">
-                            	
-                            	<!-- 사이드바 유저 리스트 출력 위치 -->
-                            	
-                            </div>
-							<!-- my community list -->
-                            <button class="dropdown-btn mt-3 font-weight-bold">Community
-                                <i class="fa fa-caret-down"></i>
-                            </button>
-                            <div id="sidebar-communities" class="dropdown-container flex-column">
-                            	
-								<!-- 사이드바 커뮤니티 리스트 출력 위치 -->
-
-                            </div>
-							<!-- content list -->
-                            <button class="dropdown-btn mt-3 font-weight-bold">Content
-                                <i class="fa fa-caret-down"></i>
-                            </button>
-                            <div id="sidebar-contents" class="dropdown-container flex-column">
-                            	
-                            	<!-- @@@@@@@@@@@@@@ 검색기능 추가해야함 @@@@@@@@@@@@@@ -->
-                            	
-                                <div>
-                                    <a href="#" class="ml-3" onclick="selectContent('image')" data-toggle="modal" data-target="#ContentsModal">#Image</a>
-                                </div>
-                                <div>
-                                    <a href="#" class="ml-3" onclick="selectContent('file')" data-toggle="modal" data-target="#ContentsModal" >#File</a>
-                                </div>
-                                <div>
-                                    <a href="#" class="ml-3" onclick="selectContent('text')" data-toggle="modal" data-target="#ContentsModal" >#Text</a>
-                                </div>
-                                 
-                            </div>
+                        <div class="col-12 " id="sidebar-body" style=" background-image: url('https://whale-store.pstatic.net/20191111_63/1573440818118JES0l_PNG/nightwhale_img02.png');">
+                        	<div class="overflow-auto">
+	                        	<!-- community-thumbnail -->
+	                        	<div class="mt-3 d-flex justify-content-center">
+	                                <img id="sidebar-communityImg" class="responsive" src="" style="width:100%; height:250px;">
+	                            </div>
+	                            <!-- user list -->
+	                            <button class="dropdown-btn mt-3 font-weight-bold">User
+	                                <i class="fa fa-caret-down"></i>
+	                            </button>
+	                            <div id="sidebar-users" class="dropdown-container flex-column">
+	                            	
+	                            	<!-- 사이드바 유저 리스트 출력 위치 -->
+	                            	
+	                            </div>
+								<!-- my community list -->
+	                            <button class="dropdown-btn mt-3 font-weight-bold">Community
+	                                <i class="fa fa-caret-down"></i>
+	                            </button>
+	                            <div id="sidebar-communities" class="dropdown-container flex-column">
+	                            	
+									<!-- 사이드바 커뮤니티 리스트 출력 위치 -->
+	
+	                            </div>
+								<!-- content list -->
+	                            <button class="dropdown-btn mt-3 font-weight-bold">Content
+	                                <i class="fa fa-caret-down"></i>
+	                            </button>
+	                            <div id="sidebar-contents" class="dropdown-container flex-column">
+	                            	
+	                            	<!-- @@@@@@@@@@@@@@ 검색기능 추가해야함 @@@@@@@@@@@@@@ -->
+	                            	
+	                                <div>
+	                                    <a href="#" class="ml-3" onclick="selectContent('image')" data-toggle="modal" data-target="#ContentsModal">#Image</a>
+	                                </div>
+	                                <div>
+	                                    <a href="#" class="ml-3" onclick="selectContent('file')" data-toggle="modal" data-target="#ContentsModal" >#File</a>
+	                                </div>
+	                                <div>
+	                                    <a href="#" class="ml-3" onclick="selectContent('text')" data-toggle="modal" data-target="#ContentsModal" >#Text</a>
+	                                </div>
+	                                 
+	                            </div>
+                        	
+                        	</div>
                         </div>
                     </div>
                 </div>
@@ -160,30 +163,29 @@
             <!-- chat -->
             <div class="col-10 d-flex justify-content-center flex-column m-0 p-0" >
                 <!-- header -->
-                <div class="bg-secondary sticky-top" id="header">
+                <div class=" sticky-top" id="header" style=" background-image: url('https://whale-store.pstatic.net/20191111_63/1573440818118JES0l_PNG/nightwhale_img02.png');">
                     <div class="row justify-content-between">
                         <div class="col-4 m-1">
                             <div class="mb-1">
-                                <h5 class="font-weight-bold" id="communityTitle" ></h5>
+                                <h5 class="font-weight-bold text-white" id="communityTitle" ></h5>
                                 <input type="hidden" id="sessionId" value="">
 								<!-- 최초 웹소켓 연결시 서버로부터 반환받아서 이곳에 넣어두기 -->
 								<input type="hidden" id="communityNo" value="${communityNo }">
 								<input type="hidden" id="userNo" value="${userNo }">
                             </div>
                             <div>
-                                <h6 class="font-weight-light" id="communityIntro" style="display: inline-block;"></h6>
-                                <h6 class="font-weight-lighter small" id="communityTags" style="display: inline-block;"></h6>
+                                <h6 class="font-weight-light text-white" id="communityIntro" style="display: inline-block;"></h6>
+                                <h6 class="font-weight-lighter small text-white" id="communityTags" style="display: inline-block;"></h6>
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="row align-content-center" style="height: 100%;">
                                 <div class="col-9 text-right">
-                                    <img src="https://www.clipartmax.com/png/middle/252-2526984_%ED%94%84%EB%A0%8C%EC%A6%88%ED%8C%9D-%EB%9D%BC%EC%9D%B4%EC%96%B8-png-%ED%94%BC%ED%81%AC%EB%8B%89%EB%9D%BC%EC%9D%B4%EC%96%B8-%ED%9B%84%EB%93%9C%EB%9D%BC%EC%9D%B4%EC%96%B8-kakao-friends-ryan-png.png" 
-                                    	style="width: 50px;">
-                                    <span id="userName">
+                                    <img id="userImage" src="" style="width: 50px;">
+                                    <span id="userName" class="text-white">
                                         
                                     </span>
-                                    <span class="ml-2 font-italic" id="community-guest-cnt"></span>
+                                    <span class="ml-2 font-italic text-white" id="community-guest-cnt"></span>
                                 </div>
                                 <div class="col-3 text-center">
                                     <div class="dropdown">
@@ -515,11 +517,12 @@ function connect() {
 						
 						if (object.communityGuests[i].CommunitiesGrade == '방장') {
 							// 커뮤니티장(방장)
-							var mark = ' (bj)';
+							var mark = ' (host)';
 						}
-						
-						if ($("#userNo").val == userNo) {
+
+						if (myUserNo == userNo) {
 							var who = ' (you)';
+							$('#userImage').attr('src', '../../resources/img/uploadimg/'+object.communityGuests[i].userImg );
 						}
 						
 						userList += "<div>"
@@ -793,7 +796,7 @@ function savedAppendMessage(key, content) {
 	var mainValue = '';
 	if (content.communityFiles) {
 		mainValue =	"<div class='media border p-1 mb-1' style='background-color: "+bg+"'>"
-				    +"<img src='../../resources/contentfile/default08.jpg' class='mr-2 rounded-circle' style='width:50px;'>"
+				    +"<img src='../../resources/img/uploadimg/"+ content.userImg +"' class='mr-2 rounded-circle' style='width:50px;'>"
 				    +"<div class='media-body'>"
 				    +"<h6>"+ content.userName +" <small><i>Posted on"+ content.registeredDate +"</i></small></h6>"
 				    +"<a href='/resources/contentfile/"+content.communityFiles.name+"' style='color:coral;' download>"+content.communityFiles.name.substring(17)+"</a>"
@@ -801,7 +804,7 @@ function savedAppendMessage(key, content) {
 		
 	} else if (content.communityWritings) {
 		mainValue = "<div class='media border p-1 mb-1' style='background-color: "+bg+"'>"
-					+"<img src='../../resources/contentfile/default08.jpg' class='mr-2 rounded-circle' style='width:50px;'>"
+					+"<img src='../../resources/img/uploadimg/"+ content.userImg +"' class='mr-2 rounded-circle' style='width:50px;'>"
 					+"<div class='media-body'>"
 					+"<h6>"+ content.userName +" <small><i>Posted on"+ content.registeredDate +"</i></small></h6>"
 					+"<p>"+content.communityWritings.talk+"</p>"
@@ -809,7 +812,7 @@ function savedAppendMessage(key, content) {
 		
 	} else if (content.communityImgs) {
 		mainValue = "<div class='media border p-1 mb-1' style='background-color: "+bg+"'>"
-					+"<img src='../../resources/contentfile/default08.jpg' class='mr-2 rounded-circle' style='width:50px;'>"
+					+"<img src='../../resources/img/uploadimg/"+ content.userImg +"' class='mr-2 rounded-circle' style='width:50px;'>"
 					+"<div class='media-body'>"
 					+"<h6>"+ content.userName +" <small><i>Posted on"+ content.registeredDate +"</i></small></h6>"
 					+"<img src='../../resources/contentfile/"+content.communityImgs.name+"' download style='max-width: 500px;'>"
@@ -834,7 +837,7 @@ function appendMessage(content) {
 	var mainValue = '';	
 	if ('Files' == content.mainValue) {
 		mainValue =	"<div class='media border p-1 mb-1' style='background-color: "+bg+"'>"
-				    +"<img src='../../resources/contentfile/default08.jpg' class='mr-2 rounded-circle' style='width:50px;'>"
+				    +"<img src='../../resources/img/uploadimg/"+ content.userImg +"' class='mr-2 rounded-circle' style='width:50px;'>"
 				    +"<div class='media-body'>"
 				    +"<h6>"+ content.contents.name +" <small><i>Posted on"+ content.contents.registeredDate +"</i></small></h6>"
 				    +"<a href='/resources/contentfile/"+content.contents.communityFiles.name+"' download>"+content.contents.communityFiles.name.substring(17)+"</a>"
@@ -842,7 +845,7 @@ function appendMessage(content) {
 		
 	} else if ('Writings' == content.mainValue) {
 		mainValue = "<div class='media border p-1 mb-1' style='background-color: "+bg+"'>"
-					+"<img src='../../resources/contentfile/default08.jpg' class='mr-2 rounded-circle' style='width:50px;'>"
+					+"<img src='../../resources/img/uploadimg/"+ content.userImg +"' class='mr-2 rounded-circle' style='width:50px;'>"
 					+"<div class='media-body'>"
 					+"<h6>"+ content.users.name +" <small><i>Posted on"+ content.contents.registeredDate +"</i></small></h6>"
 					+"<p>"+content.contents.communityWritings.talk+"</p>"
@@ -850,7 +853,7 @@ function appendMessage(content) {
 		
 	} else if ('Images' == content.mainValue) {
 		mainValue = "<div class='media border p-1 mb-1' style='background-color: "+bg+"'>"
-					+"<img src='../../resources/contentfile/default08.jpg' class='mr-2 rounded-circle' style='width:50px;'>"
+					+"<img src='../../resources/img/uploadimg/"+ content.userImg +"' class='mr-2 rounded-circle' style='width:50px;'>"
 					+"<div class='media-body'>"
 					+"<h6>"+ content.contents.name +" <small><i>Posted on"+ content.contents.registeredDate +"</i></small></h6>"
 					+"<img src='../../resources/contentfile/"+content.contents.communityImgs.name+"' style='max-width: 500px;'>"

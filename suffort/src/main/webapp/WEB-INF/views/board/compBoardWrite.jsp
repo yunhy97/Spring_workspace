@@ -36,7 +36,7 @@ body {
 
 	<div class="body" style="margin-top: 72px;">
 		<div class="row">
-			<div class="col-2 bg-light" >
+			<div class="col-2"  style="background-image: url('https://whale-store.pstatic.net/20191111_63/1573440818118JES0l_PNG/nightwhale_img02.png');" >
 				<%@ include file="../common/sidebar-company.jsp" %>
 			</div>
 			<div class="col-10" id="content-div">
@@ -56,7 +56,7 @@ body {
 			                	<div class="input-group-prepend" >
 			                   	 <label class="input-group-text d-flex justify-content-center" style="width: 130px;">작성자</label>
 			                 	</div>            
-			                  	<input type="text" class="form-control" id="board-writer" name="aaa" value="${LOGIN_USERS.id }" disabled>              
+			                  	<input type="text" class="form-control" id="board-writer" name="aaa" value="${LOGIN_USERS.name }" disabled>              
 			                </div>
 			            </div>						
 					</div>

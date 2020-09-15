@@ -38,7 +38,7 @@
 		<div class="row">
 			<div class="offset-4"></div>
 			<div class="col-4" >
-				<div class="card" id="card" style="margin-top:230px; background-color: rgba(245, 245, 245, 1); opacity: 0.3;">
+				<div class="card" id="card-id" style="margin-top:230px; background-color: rgba(245, 245, 245, 1); opacity: 0.3;">
 					<div class="card-body" >
 					<c:choose>
 						<c:when test="${param.error eq 'fail' }">
@@ -82,8 +82,8 @@
 <script type="text/javascript" src="/resources/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript">
 $(function() {
-	$("#card").hover(function() {
-		$(this).css("opacity", "1.0");
+	$("#card-id").hover(function() {
+		$(this).css("opacity", "0.9");
 	}, function() {
 		$(this).css("opacity", "0.3");
 	})

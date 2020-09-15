@@ -27,13 +27,18 @@
             	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-activity"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
 				<span class="ml-2 font-weight-bold" style="font-size: 18px;">메인</span>
             </a>
+            
           </li>
+          <c:if test="${LOGIN_TYPE ne 'company' }">
+          
      	  <li class="nav-item mt-4">
             <a class="nav-link text-muted" href="#">
             	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-activity"><path d="M2 16.1A5 5 0 0 1 5.9 20M2 12.05A9 9 0 0 1 9.95 20M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"></path><line fill="white" x1="2" y1="20" x2="2" y2="20"></line></svg>
 				<span class="ml-2 font-weight-bold" style="font-size: 18px;">커뮤니티</span>
             </a>
           </li>
+          
+          </c:if>
 		</ul>
 	</div>
 </nav>

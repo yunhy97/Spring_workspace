@@ -20,8 +20,10 @@ public class Users {
 	private String actived;
 	private String graduation;
 	private Date registeredDate;
-	
-	public Users() {}
+
+	public Users() {
+		
+	}
 	
 	public long getNo() {
 		return no;

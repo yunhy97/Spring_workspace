@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sample.service.CategoryService;
 import com.sample.service.CompBoardService;
+import com.sample.service.CompanyService;
 import com.sample.web.dto.CompBoardDto;
 import com.sample.web.dto.UserBoardDto;
 import com.sample.web.form.CompBoardForm;
@@ -44,13 +45,21 @@ public class CompBoardController {
 	private CompBoardService compBoardService;
 	
 	@Autowired
+	private CompanyService companyService;
+	
+	@Autowired
 	private CategoryService categoryService;
 	
 	//기업 마이페이지
 	@GetMapping("/board/compMyPage.do")
-	public String compMyPage(Companies companies, Model model) {
+	public String compMyPage(Companies companies, Model model,@RequestParam(value="companyNo", required=false, defaultValue="0")long companyNo) {
 		List<CompBoardDto> compMyPage = compBoardService.getCompBoardsByNo(companies.getNo());
 		model.addAttribute("compMyPage", compMyPage);
+		
+
+		Companies company = companyService.selectCompanyDetailByNo(companyNo);
+		model.addAttribute("company", company);
+		
 		return "board/compMyPage";
 	}
 	
@@ -144,9 +153,15 @@ public class CompBoardController {
 	
 	//기업 글 상세보기
 	@GetMapping("/board/compBoardDetail.do")
-	public String totalCompBoardDetail(@RequestParam("compBoardNo") long boardNo, Model model) {
+	public String totalCompBoardDetail(@RequestParam("compBoardNo") long boardNo,
+			@RequestParam(value="companyNo", required=false, defaultValue="0")long companyNo, Model model) {
 		CompBoardDto compBoardDto = compBoardService.getCompBoardDetail(boardNo);
 		model.addAttribute("compBoardDto", compBoardDto);
+		
+	
+			Companies company = companyService.selectCompanyDetailByNo(companyNo);
+			model.addAttribute("company", company);
+		
 		
 		return "board/totalCompBoardDetail";
 	}
@@ -160,9 +175,13 @@ public class CompBoardController {
 		
 	//기업글쓰기1
 	@GetMapping("/board/compBoardWrite.do")
-	public String compBoardWrite(Model model) {
+	public String compBoardWrite(Model model, @RequestParam(value="companyNo", required=false, defaultValue="0")long companyNo) {
 		List<Categories> categories = categoryService.getAllCategories();
 		model.addAttribute("categories", categories);
+		
+		Companies company = companyService.selectCompanyDetailByNo(companyNo);
+		model.addAttribute("company", company);
+		
 		return "board/compBoardWrite";
 	}
 	//기업글쓰기2
@@ -178,7 +197,7 @@ public class CompBoardController {
 	
 	
 	@GetMapping("/board/compBoardModify.do")
-	public String modify(@RequestParam("compBoardNo") long boardNo, Model model, CompBoardForm compBoardForm, Companies companies) {
+	public String modify(@RequestParam(value="companyNo", required=false, defaultValue="0")long companyNo,@RequestParam("compBoardNo") long boardNo, Model model, CompBoardForm compBoardForm, Companies companies) {
 		if(companies == null) {
 			return "user/totalLogin";
 		}
@@ -186,6 +205,10 @@ public class CompBoardController {
 		model.addAttribute("compBoardDto", compBoardDto);
 		List<Categories> categories = categoryService.getAllCategories();
 		model.addAttribute("categories", categories);
+		
+		Companies company = companyService.selectCompanyDetailByNo(companyNo);
+		model.addAttribute("company", company);
+		
 		return "board/compBoardWriteModify";
 	}
 	

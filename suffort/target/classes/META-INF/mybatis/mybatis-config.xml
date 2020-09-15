@@ -43,6 +43,7 @@
 		<typeAlias type="com.sample.web.dto.CommunityImgDto" alias="CommunityImgDto"/>
 		<typeAlias type="com.sample.web.dto.CommunityFileDto" alias="CommunityFileDto"/>
 		<typeAlias type="com.sample.web.form.CompaniesUpdateForm" alias="CompaniesUpdateForm"/>		
+		<typeAlias type="com.sample.web.form.UsersUpdateForm" alias="UsersUpdateForm"/>
 	</typeAliases> 
 	
 	

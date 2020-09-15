@@ -134,7 +134,7 @@ body {
 								</colgroup>
 								<tbody>
 									<tr>
-										<th>썸네일</th><td colspan="3"><img src="../../resources/img/gray.jpg" alt="..." style="height: 180px; width: 100%"></td>
+										<th>썸네일</th><td colspan="3"><img id="compimg" src="../../resources/img/uploadimg/${compBoard.companyLogo }" alt="..." style="height: 180px; width: 100%"></td>
 									</tr>
 									<tr>
 										<th>기업이름</th><td></td>
@@ -216,9 +216,9 @@ body {
 				$.each(result.items, function(index, board){
 					var row2 = '<div class="col-3" id="user-board-list" >';
 					row2 += '<div class="card mb-3" style="width: 21rem;  height: 380px;">';
-					row2 += '<a href="/board/userTotalBoardDetail.do?userBoardNo='+board.userBoardNo+'"><img src="'+board.userBoardImg+'" class="card-img-top" alt="..." style="height: 180px;"></a>';
+					row2 += '<a href="/board/userTotalBoardDetail.do?userBoardNo='+board.userBoardNo+'&userNo='+board.userNo+'"><img src="'+board.userBoardImg+'" class="card-img-top" alt="..." style="height: 180px;"></a>';
 					row2 += '<div class="card-body">';
-					row2 += '<h5 class="card-title" style="height: 43px;"><a href="/board/userTotalBoardDetail.do?userBoardNo='+board.userBoardNo+'" class="text-dark">'+board.userBoardTitle+'</a></h5>';
+					row2 += '<h5 class="card-title" style="height: 43px;"><a href="/board/userTotalBoardDetail.do?userBoardNo='+board.userBoardNo+'&userNo='+board.userNo+'" class="text-dark">'+board.userBoardTitle+'</a></h5>';
 					row2 += '<div style="height: 37px;">';
 					
 					$.each(board.tags, function(index, tag) {
@@ -276,9 +276,9 @@ body {
 				$.each(result.items, function(index, compBoard){
 					var row2='<div class="col-3" id="comp-board-list">';
 					row2 += '<div class="card mb-3" style="width: 21rem;  height: 380px;">';
-					row2 += ' <a href="/board/compBoardDetail.do?compBoardNo='+compBoard.compBoardNo+'"><img src="'+compBoard.companyLogo+'" class="card-img-top" alt="..." style="height: 180px;"></a>';
+					row2 += ' <a href="/board/compBoardDetail.do?compBoardNo='+compBoard.compBoardNo+'&companyNo='+compBoard.companyNo+'"><img src="../../resources/img/uploadimg/'+compBoard.companyLogo+'" class="card-img-top" alt="..." style="height: 180px;"></a>';
 					row2 += '<div class="card-body">';
-					row2 += '<h5 class="card-title" style="height: 43px;"><a href="/board/compBoardDetail.do?compBoardNo='+compBoard.compBoardNo+'" class="text-dark">'+compBoard.compBoardTitle+'</a></h5>';
+					row2 += '<h5 class="card-title" style="height: 43px;"><a href="/board/compBoardDetail.do?compBoardNo='+compBoard.compBoardNo+'&companyNo='+compBoard.companyNo+'" class="text-dark">'+compBoard.compBoardTitle+'</a></h5>';
 					row2 += '<div style="height: 37px;">';
 					$.each(compBoard.tags, function(index, tag){
 						row2 += '<p class="badge badge-secondary mr-1" data-tag-no='+tag.tagNo+'>'+tag.tagName+'</p>';
@@ -391,6 +391,7 @@ body {
 				dataType: "json",
 				success:function(compBoard) {
 					console.log(compBoard);
+					$("#compimg").attr('src', '../../resources/img/uploadimg/' + compBoard.companyLogo);
 					$("#table-compsummary-list td:eq(1)").text(compBoard.companyName);
 					$("#table-compsummary-list td:eq(2)").text(compBoard.companyUrl);
 					$("#table-compsummary-list td:eq(3)").text(compBoard.compBoardTitle);

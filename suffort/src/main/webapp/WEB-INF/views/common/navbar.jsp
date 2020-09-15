@@ -48,7 +48,9 @@
 		   		<li class="nav-item dropdown">
 		     		<a class="nav-link dropdown-toggle pt-3 pr-3 text-white" href="#" id="navbardrop" data-toggle="dropdown">MENU</a>
 		     		<div class="dropdown-menu">
-				       	<a class="dropdown-item" href="/community/main.do">Community</a>
+		     			<c:if test="${LOGIN_TYPE ne 'company' }">
+				       		<a class="dropdown-item" href="/community/main.do">Community</a>
+		     			</c:if>
 				       	
 				       	<a class="dropdown-item" href="/board/userTotalBoard.do">All List</a>
 			       		<c:if test="${not empty LOGIN_USERS }">
@@ -58,7 +60,7 @@
 				       		
 				       		</c:when>
 				       		<c:when test="${LOGIN_TYPE eq 'company' }">
-						       	<a class="dropdown-item" href="/board/compMyPage.do">My List</a>
+						       	<a class="dropdown-item" href="/board/compMyPage.do?companyNo=${LOGIN_USERS.no }">My List</a>
 				       		
 				       		</c:when>
 				       		<c:when test="${LOGIN_TYPE eq 'admin' }">
@@ -96,7 +98,7 @@
 					  			</a>
 		  				   </c:when>
 		  				   <c:when test="${LOGIN_TYPE eq 'company' }">
-		  				   		<a class="nav-link" href="/board/compMyPage.do">
+		  				   		<a class="nav-link" href="/board/compMyPage.do?companyNo=${LOGIN_USERS.no }">
 					  				<img class="" src="/resources/img/user_icon_2_white.png" alt="Logo" style="width:40px;">
 					  			</a>
 		  				   </c:when>

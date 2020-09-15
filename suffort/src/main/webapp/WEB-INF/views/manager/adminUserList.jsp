@@ -205,7 +205,7 @@ function userList() {
 				row += "<td>"+user.boardCnt+"</td>"
 				row += "<td>"+user.sumLike+"</td>"
 				if (user.sumWarnings >= 10) {
-					row += "<td style='color:red;'>"+user.sumWarning+"</td>"
+					row += "<td style='background-color: #F3AFB0;'>"+user.sumWarning+"</td>"
 				} else {
 					row += "<td>"+user.sumWarning+"</td>"
 				}

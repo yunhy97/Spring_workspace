@@ -35,7 +35,7 @@ body {
 
 	<div class="body" style="margin-top: 72px;">
 		<div class="row">
-			<div class="col-2 bg-light">
+			<div class="col-2"  style=" background-image: url('https://whale-store.pstatic.net/20191111_63/1573440818118JES0l_PNG/nightwhale_img02.png');">
 				<%@ include file="../common/sidebar-company.jsp" %>
 			</div>
 			<div class="col-10" id="content-div">
@@ -51,7 +51,7 @@ body {
 				<div class="row">
 					<div class="col-12">
 						<div class="card">
-						  <img src="${compBoardDto.companyLogo }" class="card-img-top" alt="..." style="height: 200px;">
+						  <img src="../../resources/img/uploadimg/${compBoardDto.companyLogo }" class="card-img-top" alt="..." style="height: 200px;">
 						  <h4 class="card-header text-center">${compBoardDto.compBoardTitle }</h4>
 						  <div class="card-body">
 						    
@@ -66,12 +66,14 @@ body {
 										    	<fmt:formatDate value="${compBoardDto.compBoardRegisteredDate }"/>
 										    </div>
 						  				</div>
+						  				<c:if test="${LOGIN_USERS.no eq compBoardDto.companyNo }">
 						  				<div class="col-6">
 										    <div class="text-right">
-										    	<a class="btn btn-primary" href="compBoardModify.do?compBoardNo=${compBoardDto.compBoardNo }"> 수정</a>
+										    	<a class="btn btn-primary" href="compBoardModify.do?compBoardNo=${compBoardDto.compBoardNo }&companyNo=${compBoardDto.companyNo}"> 수정</a>
 										    	<a class="btn btn-danger" id="compboard-delete" href="compBoardDelete.do?compBoardNo=${compBoardDto.compBoardNo }"> 삭제</a>
 										    </div>
 						  				</div>
+						  				</c:if>
 						  			</div>
 						  		</div>
 						  	</div>

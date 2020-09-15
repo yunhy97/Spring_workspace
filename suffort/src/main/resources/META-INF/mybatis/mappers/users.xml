@@ -70,7 +70,21 @@
 			(#{userId}, #{loginWayPwd}, #{userName}, #{userGender})
 	</insert>
 
-	<update id="updateUser" parameterType="Users">
+<!-- 	<update id="updateUser" parameterType="Users"> -->
+<!-- 		UPDATE -->
+<!-- 			users -->
+<!-- 		SET  -->
+<!-- 			user_name = #{name},  -->
+<!-- 			user_img = #{img},  -->
+<!-- 			user_gender = #{gender},  -->
+<!-- 			user_birth = #{birth},  -->
+<!-- 			user_git_addr = #{gitAddr},  -->
+<!-- 			user_email = #{email} -->
+<!-- 		WHERE -->
+<!-- 			user_no = #{no} -->
+<!-- 	</update> -->
+
+	<update id="updateUser" parameterType="UsersUpdateForm">
 		UPDATE
 			users
 		SET 

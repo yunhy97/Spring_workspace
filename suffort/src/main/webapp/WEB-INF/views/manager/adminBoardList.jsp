@@ -279,7 +279,7 @@ function userBoardList() {
 				row +="<td>"+userboard.userId+"</td>";
 				row +="<td id='boardTitle' class='text-left'><a class='text-dark' href='../board/userTotalBoardDetail.do?userBoardNo="+userboard.userBoardNo+"'>"+userboard.userBoardTitle+"</a></td>";
 				if (userboard.userBoardWarnings >= 10) {
-					row +="<td style='color:red;'>"+userboard.userBoardWarnings+"</td>";
+					row +="<td style='color:red; background-color: #F3AFB0;'>"+userboard.userBoardWarnings+"</td>";
 				} else {
 					row +="<td>"+userboard.userBoardWarnings+"</td>";
 				}
@@ -345,7 +345,7 @@ function compBoardList() {
 				row +="<td>"+compboard.companyId+"</td>";
 				row +="<td id='boardTitle' class='text-left'><a class='text-dark' href='../board/compBoardDetail.do?compBoardNo="+compboard.compBoardNo+"'>"+compboard.compBoardTitle+"</a></td>";
 				if (compboard.compBoardWarnings >= 10) {
-						row +="<td style='color: red;'>"+compboard.compBoardWarnings+"</td>";
+						row +="<td style='background-color: #F3AFB0;'>"+compboard.compBoardWarnings+"</td>";
 				} else {
 					row +="<td>"+compboard.compBoardWarnings+"</td>";
 				}

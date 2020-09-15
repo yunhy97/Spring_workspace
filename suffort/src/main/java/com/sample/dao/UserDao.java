@@ -11,8 +11,8 @@ public interface UserDao {
 	void insertUserApi (Users user);
 //	void insertUser (Users user);
 	void insertUser (UsersForm userForm);
-//	void updateUser (UsersUpdateForm usersUpdateForm);
-	void updateUser (Users user);
+//	void updateUser (Users user);
+	void updateUser (UsersUpdateForm usersUpdateForm);
 	void deleteUser(long userNo);
 	
 }

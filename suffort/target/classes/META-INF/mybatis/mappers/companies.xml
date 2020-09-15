@@ -58,6 +58,27 @@
 			company_id = #{value}
 	</select>
 	
+	<select id="selectCompanyDetailByNo" parameterType="long" resultType="Companies">
+		SELECT 
+			company_no				AS no,
+			company_id				AS id,
+			company_password		AS password,
+			company_name			AS name,
+			company_content			AS content,
+			company_actived			AS actived,
+			company_registered_date	AS registeredDate,
+			company_logo			AS logo,
+			company_url				AS url,
+			company_size			AS size,
+			company_address			AS address,
+			company_income			AS income,
+			company_started_date	AS startedDate
+		FROM 
+			companies
+		WHERE
+			company_no = #{value}
+	</select>
+	
 	<update id="updateCompany" parameterType="CompaniesUpdateForm">
 		UPDATE
 			companies

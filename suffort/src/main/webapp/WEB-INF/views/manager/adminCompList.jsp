@@ -214,7 +214,7 @@ function companyList() {
 				row +="<td>"+company.boardCnt+"</td>";
 				row +="<td>"+company.sumUserLike+"</td>";
 				if (company.sumWarning >= 10 ) {
-					row +="<td style='color:red;'>"+company.sumWarning+"</td>";
+					row +="<td style='background-color: #F3AFB0;'>"+company.sumWarning+"</td>";
 				} else {
 					row +="<td>"+company.sumWarning+"</td>";
 				}

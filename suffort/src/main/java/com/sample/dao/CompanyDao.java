@@ -14,4 +14,6 @@ public interface CompanyDao {
 	void insertCompanies(CompaniesForm companiesForm);
 //	void updateCompanies(Companies companies);
 	void updateCompany(CompaniesUpdateForm companiesUpdateForm);
+	
+	Companies selectCompanyDetailByNo(long companyNo);
 }

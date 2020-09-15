@@ -74,9 +74,9 @@ body {
 										<c:forEach var="board" items="${searchUserBoards }">
 											<div class="col-3 " >
 												<div class="card mb-3" style="width: 21rem;  height: 380px;">
-													<a href="/board/userTotalBoardDetail.do?userBoardNo=${board.userBoardNo }"><img src="${board.userBoardImg }" class="card-img-top" alt="..." style="height: 180px;"></a>
+													<a href="/board/userTotalBoardDetail.do?userBoardNo=${board.userBoardNo }&userNo=${board.userNo}"><img src="${board.userBoardImg }" class="card-img-top" alt="..." style="height: 180px;"></a>
 													<div class="card-body">
-														<h5 class="card-title" style="height: 43px;"><a href="/board/userTotalBoardDetail.do?userBoardNo=${board.userBoardNo }" class="text-dark">${board.userBoardTitle }</a></h5>
+														<h5 class="card-title" style="height: 43px;"><a href="/board/userTotalBoardDetail.do?userBoardNo=${board.userBoardNo }&userNo=${board.userNo}" class="text-dark">${board.userBoardTitle }</a></h5>
 														<div style="height: 37px;">
 															<c:forEach var="tag" items="${board.tags }">
 																<p class="badge badge-secondary">${tag.tagName }</p>
@@ -145,9 +145,9 @@ body {
 										<c:forEach var="compBoard" items="${searchCompBoards }">
 											<div class="col-3">
 												<div class="card mb-3" style="width: 21rem;  height: 380px;">
-												  <a href="/board/compBoardDetail.do?compBoardNo=${compBoard.compBoardNo }"><img src="${compBoard.companyLogo }" class="card-img-top" alt="..." style="height: 180px;"></a>
+												  <a href="/board/compBoardDetail.do?compBoardNo=${compBoard.compBoardNo }&companyNo=${compBoard.companyNo}"><img src="../../resources/img/uploadimg/${compBoard.companyLogo }" class="card-img-top" alt="..." style="height: 180px;"></a>
 												  <div class="card-body">
-												     <h5 class="card-title" style="height: 43px;"><a href="/board/compBoardDetail.do?compBoardNo=${compBoard.compBoardNo }" class="text-dark">${compBoard.compBoardTitle }</a></h5>
+												     <h5 class="card-title" style="height: 43px;"><a href="/board/compBoardDetail.do?compBoardNo=${compBoard.compBoardNo }&companyNo=${compBoard.companyNo}" class="text-dark">${compBoard.compBoardTitle }</a></h5>
 												    <div style="height: 37px;">
 												    	<c:forEach var="tag" items="${compBoard.tags }">
 													    	<p class="badge badge-secondary">${tag.tagName }</p>
@@ -185,26 +185,7 @@ body {
 					</div>
 				</div>
 				
-				<!-- community list -->
-				<div class="row pl-3">
-					<div class="col-12">
-						<div class="jumbotron" style="padding-top: 20px !important;">
-						  <p style="display: inline;">커뮤니티 [총 ?? 건]</p>
-						  <hr class="my-4">
-						  <div class="row">
-							<!-- 여기 -->
-							</div>
-							<div class="row">
-								<div class="col-12">
-									<div class="text-center">
-										<button type="button" id="btn-more-community" class="btn btn-lg text-white mb-3" 
-										style="background-image: url('https://whale-store.pstatic.net/20191111_63/1573440818118JES0l_PNG/nightwhale_img02.png');">더보기</button>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				
 			</div>
 			<!-- 회원/기업/커뮤니티 summary modal start -->
 			<div class="modal" id="modal-user-summary">
@@ -263,7 +244,7 @@ body {
 									</colgroup>
 									<tbody>
 										<tr>
-											<th>썸네일</th><td colspan="3"><img src="../../resources/img/gray.jpg" alt="..." style="height: 180px; width: 100%"></td>
+											<th>썸네일</th><td colspan="3"><img id="compimg" src="../../resources/img/uploadimg/${compBoard.companyLogo }" alt="..." style="height: 180px; width: 100%"></td>
 										</tr>
 										<tr>
 											<th>기업이름</th><td></td>
@@ -446,6 +427,7 @@ $(function() {
 			dataType: "json",
 			success:function(compBoard) {
 				console.log(compBoard);
+				$("#compimg").attr('src', '../../resources/img/uploadimg/' + compBoard.companyLogo);
 				$("#table-compsummary-list td:eq(1)").text(compBoard.companyName);
 				$("#table-compsummary-list td:eq(2)").text(compBoard.companyUrl);
 				$("#table-compsummary-list td:eq(3)").text(compBoard.compBoardTitle);

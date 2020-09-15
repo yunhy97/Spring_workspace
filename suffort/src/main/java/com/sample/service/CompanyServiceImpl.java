@@ -44,6 +44,11 @@ public class CompanyServiceImpl implements CompanyService {
 	
 	@Override
 	public void modifyCompaniesDetail(CompaniesUpdateForm companiesUpdateForm) {
+		
+		if (companiesUpdateForm.getLogo() == null) {
+			Companies companies = companyDao.selectCompanyDetailByNo(companiesUpdateForm.getNo());
+			companiesUpdateForm.setLogo(companies.getLogo());
+		}
 		companyDao.updateCompany(companiesUpdateForm);
 	}
 	
@@ -69,6 +74,11 @@ public class CompanyServiceImpl implements CompanyService {
 		
 		return savedCompanies;
 		
+	}
+	@Override
+	public Companies selectCompanyDetailByNo(long companyNo) {
+		
+		return companyDao.selectCompanyDetailByNo(companyNo);
 	}
 	
 }

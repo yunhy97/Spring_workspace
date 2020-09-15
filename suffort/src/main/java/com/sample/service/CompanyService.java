@@ -17,5 +17,5 @@ public interface CompanyService {
 	void modifyCompaniesDetail(CompaniesUpdateForm companiesUpdateForm);
 	void deleteCompanies (long companyNo, String password);
 	Companies login(String companyId, String password);
-	
+	Companies selectCompanyDetailByNo(long companyNo);
 }

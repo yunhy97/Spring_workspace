@@ -3,21 +3,42 @@ package com.sample.web.form;
 import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 public class UsersUpdateForm {
 
+	// 추가
+	private long no;
 	private String name;
 	private String img;
 	private String gender;
 	
 	@DateTimeFormat(pattern="yyyy-MM-dd")
 	private Date birth;
-	
 	private String gitAddr;
 	private String email;
+
+	// 추가 코드
+	private MultipartFile upfile;
+	
+	public MultipartFile getUpfile() {
+		return upfile;
+	}
+
+	public void setUpfile(MultipartFile upfile) {
+		this.upfile = upfile;
+	}
 	
 	public UsersUpdateForm() {
 		
+	}
+
+	public long getNo() {
+		return no;
+	}
+
+	public void setNo(long no) {
+		this.no = no;
 	}
 
 	public String getName() {
