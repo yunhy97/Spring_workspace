@@ -20,7 +20,7 @@
 	<dependency>
 	    <groupId>org.mybatis</groupId>
 	    <artifactId>mybatis</artifactId>
-	    <version>3.5.5</version>
+	    <version>3.5.6</version>
 	</dependency>
 	
 	<!-- spring의 database access 지원 라이브러리 -->
